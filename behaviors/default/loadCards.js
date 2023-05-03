@@ -5,6 +5,8 @@
 
 class LoadActor {
     setup() {
+        this.loadedCards.forEach(card => card.destroy())
+
         const cards = [
             {
                 animationClipIndex:0,
@@ -53,7 +55,7 @@ class LoadActor {
 
             }
         ]
-        cards.forEach(card => this.createCard(card))
+        this.loadedCards = cards.map(card => this.createCard(card))
     }
 }
 
