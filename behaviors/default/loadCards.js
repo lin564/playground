@@ -13,12 +13,10 @@ class LoadActor {
             {
                 animationClipIndex:0,
                 animationStartTime: 4365797,
-                animateOnApproachConfig: {
-                    proximateDistance: 10,
-                    checkInterval: 20,
-                    proximateAnimationClip: 2,
-                    distantAnimationClip: 0
-                },
+                animationProximateDistance: 10,
+                animationCheckInterval: 20,
+                animationProximateAnimationClip: 2,
+                animationDistantAnimationClip: 0
                 behaviorModules: ['AnimateOnApproach'],
                 name: '/spiderman-rigged.glb',
                 fileName: '/spiderman-rigged.glb',
@@ -36,12 +34,10 @@ class LoadActor {
             {
                 animationClipIndex: 0,
                 animationStartTime: 2695996,
-                animateOnApproachConfig: {
-                    proximateDistance: 10,
-                    checkInterval: 20,
-                    proximateAnimationClip: 2,
-                    distantAnimationClip: 0
-                },
+                animationProximateDistance: 10,
+                animationCheckInterval: 20,
+                animationProximateAnimationClip: 2,
+                animationDistantAnimationClip: 0,
                 behaviorModules: ['AnimateOnApproach'],
                 dataLocation: "3lF7xee8O-kWX2Oj2490O_dw-MLOUGp7LMwdrttAnQ3UBBgYHB9WQ0MKBQAJH0IZH0IPHgMdGQkYQgUDQxlDAgUjHicqWlleBCIrOQI_XhwCGCdaKD0-XiUdXkMPAwFCGQAYBR8FAUIABQIIDUIOCR4CDR4IQgEFDx4DGgkeHwlDB1kkDj5YFTYjASMqXRorITkWGDQLJl09PD9YHAEJNgs5VA1YLl0qXhslIUMIDRgNQwQLHic6LjYLFgpaIyYZHRgIBV8nHTwWHAUgIBguWyYHASMWOzsFHx8IAws",
                 dataScale: [0.75, 0.75, 0.75],

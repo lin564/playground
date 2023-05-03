@@ -7,14 +7,23 @@
 class AnimateOnApproachActor {
 
     _setField(field, defaultValue) {
-        const fieldSupplied = this._cardData.animateOnApproachConfig && this._cardData.animateOnApproachConfig[field];
-        this[field] = fieldSupplied?this._cardData.animateOnApproachConfig[field]:defaultValue;
-        
-
+        const fieldSupplied = this._cardData[field];
+        this[field] = fieldSupplied?this._cardData[field]:defaultValue;
     }
+    
+
     setup() {
         this.proximate  = false; // start with no one around
+        this._loadFields()
 
+        
+        this._cardData.animationClipIndex = this.distantAnimationClip;
+
+        this.future(1000).step();
+        // this.addEventListener('pointerDown', 'showDistance')
+    }
+
+    _loadFields() {
         // set up the configuration from the card
         const fields = [
             {name: 'proximateDistance', defaultValue: 10},
@@ -26,10 +35,7 @@ class AnimateOnApproachActor {
         fields.forEach(field => {
             this._setField(field.name, field.defaultValue)
         })
-        this._cardData.animationClipIndex = this.distantAnimationClip;
 
-        this.future(1000).step();
-        // this.addEventListener('pointerDown', 'showDistance')
     }
 
     _distanceSquare(avatar) {
@@ -49,7 +55,7 @@ class AnimateOnApproachActor {
 
     }
 
-    // get all of the 
+    // get all of the avatars
 
     _avatars() {
 
@@ -69,6 +75,7 @@ class AnimateOnApproachActor {
     step() {
         
         this.future(this.checkInterval).step();
+        this._loadFields();
         const avatars = this._avatars();
         if (avatars.length > 0) {
             const distances = avatars.map(avatar => this._distanceSquare(avatar))
