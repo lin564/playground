@@ -17,7 +17,7 @@ class AnimateOnApproachActor {
         this._loadFields()
 
         
-        this._cardData.animationClipIndex = this.distantAnimationClip;
+        this._cardData.animationClipIndex = this.animationDistantAnimationClip;
 
         this.future(1000).step();
         // this.addEventListener('pointerDown', 'showDistance')
@@ -26,10 +26,10 @@ class AnimateOnApproachActor {
     _loadFields() {
         // set up the configuration from the card
         const fields = [
-            {name: 'proximateDistance', defaultValue: 10},
-            {name: 'checkInterval', defaultValue: 20},
-            {name: 'proximateAnimationClip', defaultValue: 0},
-            {name: 'distantAnimationClip', defaultValue: 0}
+            {name: 'animationProximateDistance', defaultValue: 10},
+            {name: 'animationCheckInterval', defaultValue: 20},
+            {name: 'animationProximateAnimationClip', defaultValue: 0},
+            {name: 'animationDistantAnimationClip', defaultValue: 0}
         ]
 
         fields.forEach(field => {
@@ -84,7 +84,7 @@ class AnimateOnApproachActor {
             this._cardData.animationClipIndex = minDistance < this.proximateDistance?this.proximateAnimationClip:this.distantAnimationClip;
             
         } else {
-            this._cardData.animationClipIndex = this.distantAnimationClip;
+            this._cardData.animationClipIndex = this.animationDistantAnimationClip;
         }
     }
 
