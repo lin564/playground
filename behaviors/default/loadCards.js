@@ -5,7 +5,9 @@
 
 class LoadActor {
     setup() {
-        this.loadedCards.forEach(card => card.destroy())
+        if (this.loadedCards) {
+            this.loadedCards.forEach(card => card.destroy());
+        }
 
         const cards = [
             {
@@ -55,7 +57,7 @@ class LoadActor {
 
             }
         ]
-        this.loadedCards = cards.map(card => this.createCard(card))
+        this.loadedCards = cards.map(card => this.createCard(card));
     }
 }
 
