@@ -1,5 +1,5 @@
-// SimpleSpin
-// Copyright 2022 Ultisim and engageLively
+// animateOnApproach
+// Copyright 2023 Ultisim and engageLively
 // Croquet Microverse
 // animate a card when an avatar approaches
 
