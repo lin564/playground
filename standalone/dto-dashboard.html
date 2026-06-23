@@ -18,96 +18,91 @@
   .head{font-size:11px;letter-spacing:.13em;color:var(--head);text-transform:uppercase;font-weight:700;}
   .pilllive{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:#16294a;color:#9fd0ff;border:1px solid #2a4f86}
   .pillproj{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:#2a2150;color:#c6b3ff;border:1px solid #4b3a86}
-  nav{display:flex;align-items:center;gap:18px;padding:12px 20px;background:var(--nav);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
-  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1b3a6b,#0e2348);border:1px solid #2c4f86;display:flex;align-items:center;justify-content:center;color:#36c6f0;font-weight:800;}
+  nav{display:flex;align-items:center;gap:18px;padding:11px 20px;background:var(--nav);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+  .logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#1b3a6b,#0e2348);border:1px solid #2c4f86;display:flex;align-items:center;justify-content:center;color:#36c6f0;font-weight:800;}
   .brand b{font-size:15px} .brand b i{color:var(--cyan);font-style:normal} .brand .tag{font-size:10px;color:var(--soft);margin-top:1px}
   .tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:8px}
-  .tab{padding:7px 12px;border-radius:8px;color:var(--muted);font-size:13px;cursor:default;} .tab.on{background:#15294a;color:#fff;font-weight:600}
+  .tab{padding:6px 11px;border-radius:8px;color:var(--muted);font-size:13px;cursor:default;} .tab.on{background:#15294a;color:#fff;font-weight:600}
   .navr{margin-left:auto;display:flex;align-items:center;gap:12px}
-  .icobtn{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#0d1d39;color:#9fb3d6;display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .cta{background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:700;padding:9px 14px;border-radius:9px;cursor:pointer;font-size:13px;box-shadow:var(--shadow)}
-  .status{display:flex;align-items:center;gap:8px;padding:9px 22px;border-bottom:1px solid var(--line);background:#1a1430;color:#e9d9a6;font-size:12px}
+  .icobtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#0d1d39;color:#9fb3d6;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .cta{background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:700;padding:8px 13px;border-radius:9px;cursor:pointer;font-size:13px;box-shadow:var(--shadow)}
+  .status{display:flex;align-items:center;gap:8px;padding:7px 22px;border-bottom:1px solid var(--line);background:#1a1430;color:#e9d9a6;font-size:12px}
   .status b{color:#ffd86b} .status .right{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted)}
   .blip{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(61,220,151,.16)}
-  .purpose{max-width:1280px;margin:16px auto 0;padding:0 20px}
-  .pbox{background:linear-gradient(135deg,#11254a,#0f1e39);border:1px solid #244b86;border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
-  .pbox h1{margin:0;font-size:20px} .pbox p{margin:6px 0 0;color:#bcd0ee;max-width:840px}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-  @media(max-width:780px){.steps{grid-template-columns:1fr}}
-  .step{background:#0d1c38;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:11px;align-items:flex-start}
-  .step .num{width:26px;height:26px;border-radius:50%;background:#16294a;border:1px solid #2a4f86;color:#7fd0ff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-  .step .t{font-weight:700} .step .d{color:var(--muted);font-size:12px}
-  .main{display:grid;grid-template-columns:236px 1fr;gap:14px;padding:16px 20px 40px;max-width:1280px;margin:0 auto}
-  @media(max-width:880px){.main{grid-template-columns:1fr}}
-  .rail{display:flex;flex-direction:column;gap:12px}
-  .raillab{font-size:10px;letter-spacing:.1em;color:var(--soft);text-transform:uppercase;margin:2px 2px -2px;font-weight:700}
-  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:var(--shadow)}
-  .tile .l{font-size:10px;color:var(--muted);font-weight:600} .tile .v{font-size:27px;font-weight:800;margin-top:5px;line-height:1}
-  .tile .g{font-size:11px;color:var(--soft);margin-top:3px} .tile canvas{width:100%;height:34px;display:block;margin-top:6px}
-  .content{display:flex;flex-direction:column;gap:14px;min-width:0}
+  /* slim intro */
+  .wrap{max-width:1320px;margin:0 auto;padding:12px 18px 36px}
+  .hint{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,#11254a,#0f1e39);
+    border:1px solid #244b86;border-radius:12px;padding:10px 14px;box-shadow:var(--shadow);margin-bottom:12px}
+  .hint .h{font-weight:700;font-size:14px;margin-right:2px}
+  .hint .stp{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px}
+  .hint .num{width:18px;height:18px;border-radius:50%;background:#16294a;border:1px solid #2a4f86;color:#7fd0ff;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
+  .hint .sep{color:#34507e}
+  /* KPI strip (unified: live + projected) */
+  .kstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px}
+  @media(max-width:980px){.kstrip{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px;box-shadow:var(--shadow)}
+  .kpi .l{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+  .kpi .vr{display:flex;align-items:baseline;gap:8px;margin-top:3px}
+  .kpi .v{font-size:25px;font-weight:800;line-height:1}
+  .kpi .proj{font-size:11px;font-weight:700} .kpi .g{font-size:10px;color:var(--soft);margin-top:2px}
+  .kpi canvas{width:100%;height:18px;display:block;margin-top:4px}
+  /* work row: twin + console */
+  .work{display:grid;grid-template-columns:1.65fr 1fr;gap:14px;align-items:start}
+  @media(max-width:980px){.work{grid-template-columns:1fr}}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-  .card .pad{padding:16px}
+  .card .pad{padding:14px}
   .card .cap{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
   .card .cap .sub{color:var(--muted);font-size:12px}
-  .legend{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+  .legend{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
   .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
-  .hero{position:relative;height:360px;border-radius:12px;overflow:hidden;background:#070f1e;border:1px solid #16243d}
+  .hero{position:relative;height:58vh;min-height:380px;border-radius:12px;overflow:hidden;background:#070f1e;border:1px solid #16243d}
   .hero iframe{width:100%;height:100%;border:0;display:block}
-  /* ingestion */
-  .feeds{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  @media(max-width:780px){.feeds{grid-template-columns:1fr 1fr}}
-  .feed{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .feed .fh{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px}
-  .feed .fh .d{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(61,220,151,.18);margin-left:auto}
-  .feed .n{font-size:20px;font-weight:800;margin-top:8px} .feed .sub{font-size:11px;color:var(--soft)}
-  .feed canvas{width:100%;height:26px;display:block;margin-top:6px}
-  .smartr{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;align-items:center;color:var(--soft);font-size:11px}
-  .smartr .s{background:#0d1d39;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:#bcd0ee}
-  /* flow */
-  .flow{display:grid;grid-template-columns:repeat(9,auto);align-items:center;justify-content:space-between;gap:4px}
-  @media(max-width:780px){.flow{grid-template-columns:1fr;gap:10px}}
-  .node{text-align:center;min-width:92px}
-  .node .circ{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:19px;border:1px solid var(--line)}
-  .node .n{font-size:22px;font-weight:800;margin-top:6px} .node .lab{font-size:11px;color:var(--muted);margin-top:2px}
-  .arrow{color:#34507e;font-size:20px;text-align:center} @media(max-width:780px){.arrow{display:none}}
-  /* console */
   .console{border:1px solid #2a4f86;background:linear-gradient(180deg,#0f2143,#0f1e39)}
-  .grp{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 6px;font-weight:700}
-  .chips{display:flex;gap:8px;flex-wrap:wrap}
-  .chip{padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:#0d1d39;color:#cfe0f5;cursor:pointer;font-size:13px;display:flex;gap:7px;align-items:center}
+  .console .pad{max-height:calc(58vh + 46px);overflow-y:auto}
+  .grp{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px;font-weight:700}
+  .grp:first-of-type{margin-top:2px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{padding:8px 11px;border-radius:9px;border:1px solid var(--line);background:#0d1d39;color:#cfe0f5;cursor:pointer;font-size:12px;display:flex;gap:6px;align-items:center}
   .chip:hover{border-color:var(--cyan)} .chip.on{background:#13294a;border-color:var(--cyan);color:#fff;font-weight:600}
   .chip.path{border-color:#4b3a86;background:#1c1640;color:#d9caff}
-  .levers{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin:6px 0 4px}
-  @media(max-width:680px){.levers{grid-template-columns:1fr}}
-  .lever label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between} .lever label b{color:var(--cyan)}
-  .lever input[type=range]{width:100%;margin-top:6px;accent-color:var(--cyan)}
-  /* pathway to 10x */
-  .pathway{background:#0d1c38;border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:6px}
-  .pathway .ph{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
-  .pathway .big{font-size:24px;font-weight:800} .pathway .tgt{color:var(--soft);font-size:12px;margin-left:auto}
-  .prow{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:12px}
-  .prow .nm{width:160px;color:var(--muted)} .prow .track{flex:1;height:9px;background:#0a1426;border-radius:5px;overflow:hidden}
-  .prow .track>i{display:block;height:100%;border-radius:5px} .prow .mult{width:46px;text-align:right;font-weight:700}
-  .combine{height:11px;background:#0a1426;border-radius:6px;overflow:hidden;margin-top:8px}
+  .lever{margin:9px 0} .lever label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between} .lever label b{color:var(--cyan)}
+  .lever input[type=range]{width:100%;margin-top:5px;accent-color:var(--cyan)}
+  .pathway{background:#0d1c38;border:1px solid var(--line);border-radius:11px;padding:11px;margin-top:6px}
+  .pathway .ph{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+  .pathway .big{font-size:22px;font-weight:800} .pathway .tgt{color:var(--soft);font-size:11px;margin-left:auto}
+  .prow{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11px}
+  .prow .nm{width:128px;color:var(--muted)} .prow .track{flex:1;height:8px;background:#0a1426;border-radius:5px;overflow:hidden}
+  .prow .track>i{display:block;height:100%;border-radius:5px} .prow .mult{width:44px;text-align:right;font-weight:700}
+  .combine{height:10px;background:#0a1426;border-radius:6px;overflow:hidden;margin-top:7px}
   .combine>i{display:block;height:100%;background:linear-gradient(90deg,#3b82f6,#36c6f0)}
-  .baline{display:flex;align-items:center;gap:8px;margin:16px 0 8px} .baline .arw{color:var(--soft)}
-  .ba{display:grid;grid-template-columns:repeat(4,1fr);gap:12px} @media(max-width:780px){.ba{grid-template-columns:1fr 1fr}}
-  .bacard{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px}
-  .bacard .lab{font-size:11px;color:var(--muted)} .bacard .ba2{display:flex;align-items:baseline;gap:8px;margin-top:6px}
-  .bacard .now{font-size:14px;color:var(--soft)} .bacard .nx{font-size:22px;font-weight:800} .bacard .ch{font-size:11px;font-weight:700;margin-top:4px}
-  .verdict{display:flex;gap:14px;align-items:center;margin-top:16px;padding:15px 16px;border-radius:14px;border:1px solid var(--line)}
-  .verdict .ic{font-size:30px} .verdict .vh{font-weight:800;font-size:15px} .verdict .vt{color:#cdddf2;font-size:12.5px;margin-top:2px}
+  .verdict{display:flex;gap:11px;align-items:flex-start;margin-top:12px;padding:12px;border-radius:12px;border:1px solid var(--line)}
+  .verdict .ic{font-size:24px} .verdict .vh{font-weight:800;font-size:14px} .verdict .vt{color:#cdddf2;font-size:12px;margin-top:2px}
   .verdict.good{background:rgba(61,220,151,.10);border-color:#1f6e4f} .verdict.warn{background:rgba(245,166,35,.10);border-color:#7a5a1e} .verdict.bad{background:rgba(255,92,92,.10);border-color:#7a2e2e}
-  .run{margin-left:auto;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:800;padding:13px 20px;border-radius:12px;cursor:pointer;font-size:14px;box-shadow:var(--shadow);white-space:nowrap}
-  /* synthetic data */
+  .run{width:100%;margin-top:10px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:800;padding:12px;border-radius:11px;cursor:pointer;font-size:14px;box-shadow:var(--shadow)}
+  /* supporting full-width sections */
+  .below{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+  .feeds{display:grid;grid-template-columns:repeat(4,1fr);gap:12px} @media(max-width:780px){.feeds{grid-template-columns:1fr 1fr}}
+  .feed{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px}
+  .feed .fh{display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px}
+  .feed .fh .d{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(61,220,151,.18);margin-left:auto}
+  .feed .n{font-size:19px;font-weight:800;margin-top:7px} .feed .sub{font-size:11px;color:var(--soft)}
+  .feed canvas{width:100%;height:24px;display:block;margin-top:6px}
+  .smartr{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px;align-items:center;color:var(--soft);font-size:11px}
+  .smartr .s{background:#0d1d39;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:#bcd0ee}
+  .flow{display:grid;grid-template-columns:repeat(9,auto);align-items:center;justify-content:space-between;gap:4px}
+  @media(max-width:780px){.flow{grid-template-columns:1fr;gap:10px}}
+  .node{text-align:center;min-width:90px}
+  .node .circ{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:18px;border:1px solid var(--line)}
+  .node .n{font-size:21px;font-weight:800;margin-top:6px} .node .lab{font-size:11px;color:var(--muted);margin-top:2px}
+  .arrow{color:#34507e;font-size:20px;text-align:center} @media(max-width:780px){.arrow{display:none}}
   .syn{display:grid;grid-template-columns:1.3fr 1fr;gap:16px} @media(max-width:820px){.syn{grid-template-columns:1fr}}
   table.stat{width:100%;border-collapse:collapse;font-size:12px}
-  table.stat th,table.stat td{text-align:left;padding:7px 8px;border-bottom:1px solid #1a2c4d}
+  table.stat th,table.stat td{text-align:left;padding:6px 8px;border-bottom:1px solid #1a2c4d}
   table.stat th{color:var(--soft);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
   table.stat td.num{text-align:right;font-variant-numeric:tabular-nums}
   .privacy{margin-top:12px;background:#0d1c38;border:1px solid #1f6e4f;border-radius:12px;padding:12px}
   .privacy .ok{color:var(--green);font-weight:700} .privacy div{margin:3px 0;font-size:12px;color:#cdddf2}
-  .synbtn{background:#13294a;border:1px solid #2a4f86;color:#dCEEFF;color:#dceeff;border-radius:9px;padding:9px 13px;cursor:pointer;font-size:12px;margin-top:10px}
+  .synbtn{background:#13294a;border:1px solid #2a4f86;color:#dceeff;border-radius:9px;padding:8px 12px;cursor:pointer;font-size:12px;margin-top:10px}
   .up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--soft)}
   .muted{color:var(--muted)} .small{font-size:11px;color:var(--soft)}
 </style>
@@ -119,43 +114,51 @@
   <div class="tabs"><span class="tab on">Simulator</span><span class="tab">Data</span><span class="tab">Scenarios</span><span class="tab">Readiness</span><span class="tab">Analytics</span></div>
   <div class="navr"><div class="icobtn">🔔</div><div class="icobtn">⚙</div><button class="cta" id="playBtn">⏸ Live</button></div>
 </nav>
-
 <div class="status">
-  🧪 SIMULATION MODE — <b>no real systems affected.</b>&nbsp;Test decisions safely on a digital twin of the workforce.
+  🧪 SIMULATION MODE — <b>no real systems affected.</b>
   <span class="right"><span class="blip"></span> twin running · week <b id="wk" style="color:#eaf1fb">0</b> · <span id="clock">—</span></span>
 </div>
 
-<div class="purpose"><div class="pbox">
-  <h1>Test a workforce decision before you make it for real</h1>
-  <p>A “flight simulator” for the DLA workforce. Live operational feeds keep a digital twin current; you set up a
-     decision or a crisis, preview the projected impact, and commit it — without touching any real system.</p>
-  <div class="steps">
-    <div class="step"><div class="num">1</div><div><div class="t">Set up a decision or crisis</div><div class="d">Move the structural levers (AI, process, teaming, reskilling) or pick a scenario.</div></div></div>
-    <div class="step"><div class="num">2</div><div><div class="t">Preview the outcome</div><div class="d">See the pathway toward 10× and a recommendation — before you commit.</div></div></div>
-    <div class="step"><div class="num">3</div><div><div class="t">Run it on the twin</div><div class="d">Commit the decision and watch the organization adapt week by week.</div></div></div>
-  </div>
-</div></div>
-
-<div class="main">
-  <div class="rail">
-    <div class="raillab">Live state of the org <span class="pilllive">LIVE</span></div>
-    <div id="rail"></div>
+<div class="wrap">
+  <!-- slim intro -->
+  <div class="hint">
+    <span class="h">Test a workforce decision before you make it for real.</span>
+    <span class="stp"><span class="num">1</span> Set up a decision (right)</span><span class="sep">›</span>
+    <span class="stp"><span class="num">2</span> Preview the impact (top &amp; verdict)</span><span class="sep">›</span>
+    <span class="stp"><span class="num">3</span> Run it on the twin (left)</span>
   </div>
 
-  <div class="content">
+  <!-- unified KPI strip: LIVE value + → PROJECTED -->
+  <div class="kstrip" id="kpis"></div>
+
+  <!-- work row: twin (left) + decision console (right) -->
+  <div class="work">
     <div class="card"><div class="pad">
-      <div class="cap"><span class="head">Live Digital Twin</span><span class="sub">— a safe, simulated model of the DLA workforce</span>
+      <div class="cap"><span class="head">Live Digital Twin</span><span class="sub">— simulated DLA workforce</span>
         <span class="legend"><span><i style="background:#3ddc97"></i>Healthy</span><span><i style="background:#f5a623"></i>Stretched</span><span><i style="background:#ff5c5c"></i>Overloaded</span><span><i style="background:#5b6b86"></i>Deployed</span></span></div>
       <div class="hero"><iframe id="twin" src="./dto-twin.html?embed=1" title="3D twin"></iframe></div>
     </div></div>
 
-    <!-- DATA INGESTION -->
+    <div class="card console"><div class="pad">
+      <div class="cap"><span class="head">Decision Console</span><span class="pillproj">PROJECTED</span></div>
+      <div class="grp">Quick scenarios</div>
+      <div class="chips" id="chips"></div>
+      <div class="grp">Structural levers — pathways to 10×</div>
+      <div id="levers"></div>
+      <div class="lever"><label>🪖 Staff deployed (surge) <b id="suVal">0%</b></label><input type="range" id="suSlide" min="0" max="60" value="0"></div>
+      <div class="grp">Pathway to 10×</div>
+      <div class="pathway" id="pathway"></div>
+      <div class="verdict warn" id="verdict"><div class="ic" id="vIc">⚠️</div><div><div class="vh" id="vHead">—</div><div class="vt" id="vText">—</div></div></div>
+      <button class="run" id="runBtn">Run This Decision ▶</button>
+    </div></div>
+  </div>
+
+  <!-- supporting detail (below the fold) -->
+  <div class="below">
     <div class="card"><div class="pad">
       <div class="cap"><span class="head">Data Ingestion</span><span class="sub">— live operational feeds keep the twin current (simulated connectors for the POC)</span></div>
       <div class="feeds" id="feeds"></div>
-      <div class="smartr"><span class="muted">SMARTR pipeline:</span>
-        <span class="s">Scrub</span>›<span class="s">Model</span>›<span class="s">Align</span>›<span class="s">Represent</span>›<span class="s">Transform</span>›<span class="s">Render</span>
-        <span class="small" style="margin-left:auto" id="cleanRate">validated 0%</span></div>
+      <div class="smartr"><span class="muted">SMARTR pipeline:</span><span class="s">Scrub</span>›<span class="s">Model</span>›<span class="s">Align</span>›<span class="s">Represent</span>›<span class="s">Transform</span>›<span class="s">Render</span><span class="small" style="margin-left:auto" id="cleanRate">validated 0%</span></div>
     </div></div>
 
     <div class="card"><div class="pad">
@@ -163,61 +166,26 @@
       <div class="flow" id="flow"></div>
     </div></div>
 
-    <!-- DECISION CONSOLE -->
-    <div class="card console"><div class="pad">
-      <div class="cap"><span class="head">Decision Console</span><span class="sub">— set up a decision, preview the impact <span class="pillproj">PROJECTED</span>, then commit it</span></div>
-
-      <div class="grp">Quick scenarios</div>
-      <div class="chips" id="chips"></div>
-
-      <div class="grp">Structural levers — the pathways to 10× productivity</div>
-      <div class="levers" id="levers"></div>
-      <div class="grp">Condition (stress)</div>
-      <div class="levers" style="grid-template-columns:1fr"><div class="lever"><label>🪖 Staff deployed (surge) <b id="suVal">0%</b></label><input type="range" id="suSlide" min="0" max="60" value="0"></div></div>
-
-      <div class="grp">Pathway to 10× <span class="pillproj">PROJECTED</span></div>
-      <div class="pathway" id="pathway"></div>
-
-      <div class="baline"><span class="head" style="color:var(--soft)">Projected impact</span>
-        <span class="sub">BEFORE (today)</span><span class="arw">→</span><span class="sub">AFTER (your decision)</span></div>
-      <div class="ba" id="ba"></div>
-
-      <div class="verdict warn" id="verdict">
-        <div class="ic" id="vIc">⚠️</div>
-        <div><div class="vh" id="vHead">—</div><div class="vt" id="vText">—</div></div>
-        <button class="run" id="runBtn">Run This Decision ▶</button>
-      </div>
-    </div></div>
-
-    <!-- SYNTHETIC DATA -->
     <div class="card"><div class="pad">
       <div class="cap"><span class="head">Synthetic Data Generation</span><span class="sub">— analyze the workforce without exposing anyone’s PII</span></div>
       <div class="syn">
-        <div>
-          <table class="stat" id="statTable"></table>
-          <button class="synbtn" id="regen">↻ Regenerate synthetic dataset</button>
-        </div>
-        <div>
-          <div class="small" style="margin-bottom:6px">Skill distribution — real vs synthetic</div>
+        <div><table class="stat" id="statTable"></table><button class="synbtn" id="regen">↻ Regenerate synthetic dataset</button></div>
+        <div><div class="small" style="margin-bottom:6px">Skill distribution — real vs synthetic</div>
           <canvas id="hist" height="150" style="width:100%;background:#0b1730;border:1px solid #16243d;border-radius:10px"></canvas>
-          <div class="privacy" id="privacy"></div>
-        </div>
+          <div class="privacy" id="privacy"></div></div>
       </div>
     </div></div>
 
-    <!-- METHODOLOGY / HONEST LIMITATIONS -->
     <div class="card"><div class="pad">
-      <div class="cap"><span class="head">Methodology &amp; Honest Limitations</span>
-        <span class="sub">— what this POC demonstrates vs. what is Phase II work</span></div>
+      <div class="cap"><span class="head">Methodology &amp; Honest Limitations</span><span class="sub">— what this POC demonstrates vs. Phase II work</span></div>
       <table class="stat">
         <tr><th>Area</th><th>In this POC</th><th>Production (Phase II+)</th></tr>
-        <tr><td>Live data ingestion</td><td>Simulated feeds (clearly labeled)</td><td>Governed connectors to DLA systems of record</td></tr>
-        <tr><td>Synthetic data</td><td>Real method — covariance-preserving, PII-stripped</td><td>+ differential-privacy &amp; utility/disclosure metrics</td></tr>
-        <tr><td>10× productivity</td><td>Illustrative lever decomposition</td><td>Calibrated to real workload baselines, SME-validated</td></tr>
-        <tr><td>Agent model</td><td>Deterministic agents with fatigue feedback</td><td>ML-updated from historical performance</td></tr>
+        <tr><td>Live data ingestion</td><td>Simulated feeds (clearly labeled)</td><td>Governed connectors to DLA systems</td></tr>
+        <tr><td>Synthetic data</td><td>Real method — covariance-preserving, PII-stripped</td><td>+ differential privacy &amp; utility metrics</td></tr>
+        <tr><td>10× productivity</td><td>Illustrative lever decomposition</td><td>Calibrated to real baselines, SME-validated</td></tr>
         <tr><td>Multi-user</td><td>Local cross-window sync</td><td>Networked collaboration backend</td></tr>
       </table>
-      <div class="small" style="margin-top:10px">All figures are illustrative model outputs for a TRL 3–6 feasibility demonstration — <b>not validated against live DLA data</b>. Calibration, validation, and governed data integration are explicit Phase I/II deliverables.</div>
+      <div class="small" style="margin-top:9px">Illustrative model outputs for a TRL 3–6 feasibility demo — <b>not validated against live DLA data</b>.</div>
     </div></div>
   </div>
 </div>
@@ -231,21 +199,20 @@ const DIRS=["J1 Personnel","J3 Operations","J6 Information","J7 Readiness"];
 const PER=60, POP=DIRS.length*PER;
 const KEYS=["surge","disruption","geo","ai","process","teaming","reskill"];
 const SCN=[
-  {name:"Today (baseline)",    icon:"🟢", surge:0.00,disruption:0.05,geo:0.10,ai:0.20,process:0,teaming:0,reskill:0},
-  {name:"Surge Deployment",    icon:"🪖", surge:0.35,disruption:0.15,geo:0.30,ai:0.25,process:0,teaming:0,reskill:0},
-  {name:"Supply-Chain Shock",  icon:"📦", surge:0.10,disruption:0.60,geo:0.40,ai:0.30,process:0,teaming:0,reskill:0},
-  {name:"Geopolitical Crisis", icon:"🌍", surge:0.25,disruption:0.45,geo:0.75,ai:0.35,process:0,teaming:0,reskill:0},
-  {name:"Go All-In on AI",     icon:"🤖", surge:0.10,disruption:0.20,geo:0.30,ai:0.90,process:0,teaming:0,reskill:0},
-  {name:"10× Pathway",         icon:"🚀", surge:0.05,disruption:0.10,geo:0.20,ai:0.92,process:0.92,teaming:0.92,reskill:0.92,path:true},
+  {name:"Today",            icon:"🟢", surge:0.00,disruption:0.05,geo:0.10,ai:0.20,process:0,teaming:0,reskill:0},
+  {name:"Surge",            icon:"🪖", surge:0.35,disruption:0.15,geo:0.30,ai:0.25,process:0,teaming:0,reskill:0},
+  {name:"Supply Shock",     icon:"📦", surge:0.10,disruption:0.60,geo:0.40,ai:0.30,process:0,teaming:0,reskill:0},
+  {name:"Geopolitical",     icon:"🌍", surge:0.25,disruption:0.45,geo:0.75,ai:0.35,process:0,teaming:0,reskill:0},
+  {name:"All-In on AI",     icon:"🤖", surge:0.10,disruption:0.20,geo:0.30,ai:0.90,process:0,teaming:0,reskill:0},
+  {name:"10× Pathway",      icon:"🚀", surge:0.05,disruption:0.10,geo:0.20,ai:0.92,process:0.92,teaming:0.92,reskill:0.92,path:true},
 ];
 function createEngine(seed){
   let s=seed>>>0; const rand=()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};
   const agents=[];
   for(let d=0;d<DIRS.length;d++) for(let k=0;k<PER;k++)
     agents.push({dir:d,skill:0.45+rand()*0.5,automatable:0.30+rand()*0.6,reserve:rand()<0.30,deployed:false,load:0.55,fatigue:0,aiAbsorb:0.12});
-  const cur={surge:0,disruption:0.05,geo:0.10,ai:0.20,process:0,teaming:0,reskill:0};
-  const tgt={...cur};
-  let week=0, kpi=null, per=null;
+  const cur={surge:0,disruption:0.05,geo:0.10,ai:0.20,process:0,teaming:0,reskill:0}, tgt={...cur};
+  let week=0, kpi=null;
   function setLevers(o){ for(const k in o) if(k in tgt) tgt[k]=o[k]; }
   function snapParams(p){ for(const k of KEYS) if(k in p){cur[k]=p[k];tgt[k]=p[k];} }
   function step(){
@@ -255,29 +222,21 @@ function createEngine(seed){
     const N=6;
     if(dep<desired){let add=Math.min(N,desired-dep);for(const a of agents){if(add<=0)break;if(!a.deployed&&!a.reserve){a.deployed=true;add--;}}}
     else if(dep>desired){let rem=Math.min(N,dep-desired);for(let i=agents.length-1;i>=0&&rem>0;i--){if(agents[i].deployed){agents[i].deployed=false;rem--;}}}
-    const demandFactor=1+0.95*cur.disruption+0.30*cur.geo;
-    const baseLoad=0.55*(1-0.45*cur.process);
+    const demandFactor=1+0.95*cur.disruption+0.30*cur.geo, baseLoad=0.55*(1-0.45*cur.process);
     const dirActive=[0,0,0,0]; for(const a of agents) if(!a.deployed) dirActive[a.dir]++;
-    const pd=DIRS.map(()=>({healthy:0,high:0,over:0,deployed:0}));
     let overloaded=0,healthy=0,deployed=0,aiSum=0,cap=0,baseLabor=0;
     for(const a of agents){
-      if(a.deployed){deployed++;pd[a.dir].deployed++;a.fatigue=Math.max(0,a.fatigue-0.05);continue;}
+      if(a.deployed){deployed++;a.fatigue=Math.max(0,a.fatigue-0.05);continue;}
       const redis=PER/Math.max(1,dirActive[a.dir]); a.aiAbsorb=a.automatable*cur.ai;
       const skillEff=Math.min(1,a.skill*(1+0.30*cur.reskill));
       let load=baseLoad*demandFactor*(1-a.aiAbsorb)*redis*(1+a.fatigue*0.30)/(Math.max(0.55,skillEff)/0.70);
       a.load=load;
       if(load>0.90)a.fatigue=Math.min(1,a.fatigue+0.04); else a.fatigue=Math.max(0,a.fatigue-0.03);
       cap+=skillEff; baseLabor+=0.55; aiSum+=a.aiAbsorb;
-      const p=pd[a.dir];
-      if(load>1.0){overloaded++;p.over++;} else if(load>0.88){p.high++;} else if(a.fatigue<0.5){healthy++;p.healthy++;} else {p.high++;}
+      if(load>1.0)overloaded++; else if(load<=0.88&&a.fatigue<0.5)healthy++;
     }
     const active=POP-deployed, avgAi=active?aiSum/active:0;
-    // structural productivity decomposition (named pathways to 10x)
-    const fAuto=1/Math.max(0.2,1-avgAi);          // automation removes human work
-    const fProc=1/(1-0.45*cur.process);           // process streamlining cuts low-value work
-    const fTeam=1+1.0*cur.teaming;                // human-machine teaming & reorg
-    const fRe=1+0.5*cur.reskill;                  // reskilling raises output per person
-    const drag=1-0.5*(overloaded/POP);
+    const fAuto=1/Math.max(0.2,1-avgAi), fProc=1/(1-0.45*cur.process), fTeam=1+1.0*cur.teaming, fRe=1+0.5*cur.reskill, drag=1-0.5*(overloaded/POP);
     const prod=Math.max(1,fAuto*fProc*fTeam*fRe*drag);
     const totalDemand=baseLabor*demandFactor, humanDemand=totalDemand*(1-avgAi), aiUnits=totalDemand*avgAi;
     const completed=Math.min(humanDemand,cap), backlog=Math.max(0,humanDemand-cap);
@@ -287,19 +246,18 @@ function createEngine(seed){
     kpi={prod,readiness,coverage,automation:avgAi*100,overloaded,deployed,active,
          contrib:{automation:fAuto,process:fProc,teaming:fTeam,reskill:fRe},
          flow:{incoming:Math.round(totalDemand*S),ai:Math.round(aiUnits*S),inprog:Math.round(humanDemand*S),done:Math.round(completed*S),backlog:Math.round(backlog*S)}};
-    per=pd;
   }
-  return {agents,setLevers,snapParams,step,state:()=>({week,kpi,per})};
+  return {agents,setLevers,snapParams,step,state:()=>({week,kpi})};
 }
 function projectParams(p){const e=createEngine(0x2545f491);e.snapParams(p);for(let t=0;t<90;t++)e.step();return e.state().kpi;}
 const BASE=projectParams(SCN[0]);
-
 const eng=createEngine(0x2545f491);
 let playing=true;
 const decision={}; KEYS.forEach(k=>decision[k]=SCN[0][k]);
+let curProj=BASE;
 
 // ============================================================================
-//  UI helpers
+//  UI
 // ============================================================================
 const $=id=>document.getElementById(id);
 function spark(cv,arr,color){
@@ -307,203 +265,144 @@ function spark(cv,arr,color){
   if(cv.width!==w)cv.width=w; if(cv.height!==h)cv.height=h;
   const x=cv.getContext("2d"); x.clearRect(0,0,w,h); if(arr.length<2)return;
   let mn=Math.min(...arr),mx=Math.max(...arr); if(mx-mn<1e-6){mn-=1;mx+=1;}
-  const pad=3*dpr; x.beginPath(); x.lineWidth=2*dpr; x.strokeStyle=color;
+  const pad=2*dpr; x.beginPath(); x.lineWidth=2*dpr; x.strokeStyle=color;
   arr.forEach((v,i)=>{const px=pad+(w-2*pad)*i/(arr.length-1),py=h-pad-(h-2*pad)*(v-mn)/(mx-mn); i?x.lineTo(px,py):x.moveTo(px,py);});
-  x.stroke(); x.lineTo(w-pad,h-pad); x.lineTo(pad,h-pad); x.closePath(); x.globalAlpha=.12; x.fillStyle=color; x.fill(); x.globalAlpha=1;
+  x.stroke();
 }
 
-// LIVE rail
-const RAIL=[
-  {key:"prod",fmt:v=>v.toFixed(1)+"×",lab:"WORK CAPACITY",goal:"Goal ≥ 10×",color:"#3b82f6"},
-  {key:"readiness",fmt:v=>v.toFixed(0)+"%",lab:"MISSION READINESS",goal:"Goal ≥ 80%",color:"#3ddc97"},
-  {key:"coverage",fmt:v=>v.toFixed(0)+"%",lab:"STAFFING COVERAGE",goal:"Goal ≥ 90%",color:"#f5a623"},
-  {key:"overloaded",fmt:v=>v.toFixed(0),lab:"PEOPLE OVERSTRETCHED",goal:"Goal < 20",color:"#ff5c5c"},
-  {key:"automation",fmt:v=>v.toFixed(0)+"%",lab:"WORK AUTOMATED (AI)",goal:"higher is better",color:"#36c6f0"},
+// unified KPI strip (LIVE value + → projected of the staged decision)
+const KP=[
+  {key:"prod",fmt:v=>v.toFixed(1)+"×",lab:"WORK CAPACITY",goal:"Goal ≥ 10×",color:"#3b82f6",goodUp:true},
+  {key:"readiness",fmt:v=>v.toFixed(0)+"%",lab:"MISSION READINESS",goal:"Goal ≥ 80%",color:"#3ddc97",goodUp:true},
+  {key:"coverage",fmt:v=>v.toFixed(0)+"%",lab:"STAFFING COVERAGE",goal:"Goal ≥ 90%",color:"#f5a623",goodUp:true},
+  {key:"overloaded",fmt:v=>v.toFixed(0),lab:"PEOPLE OVERSTRETCHED",goal:"Goal < 20",color:"#ff5c5c",goodUp:false},
+  {key:"automation",fmt:v=>v.toFixed(0)+"%",lab:"WORK AUTOMATED (AI)",goal:"higher is better",color:"#36c6f0",goodUp:true},
 ];
-const hist={}; RAIL.forEach(r=>hist[r.key]=[]);
-$("rail").innerHTML=RAIL.map((r,i)=>`<div class="tile"><div class="l">${r.lab}</div><div class="v" id="rv${i}">—</div><div class="g">${r.goal}</div><canvas id="rc${i}"></canvas></div>`).join("");
+const hist={}; KP.forEach(r=>hist[r.key]=[]);
+$("kpis").innerHTML=KP.map((r,i)=>`<div class="kpi"><div class="l">${r.lab}</div>
+  <div class="vr"><div class="v" id="kv${i}" style="color:${r.color}">—</div><div class="proj" id="kp${i}"></div></div>
+  <div class="g">${r.goal}</div><canvas id="kc${i}"></canvas></div>`).join("");
+function updateKPIs(){
+  const k=eng.state().kpi; if(!k) return;
+  KP.forEach((r,i)=>{
+    const live=k[r.key], proj=curProj?curProj[r.key]:live;
+    $("kv"+i).textContent=r.fmt(live);
+    const diff=Math.abs(proj-live), eps=r.key==="prod"?0.1:1;
+    if(diff<eps){ $("kp"+i).textContent="→ "+r.fmt(proj); $("kp"+i).className="proj flat"; }
+    else{ const better=r.goodUp?proj>live:proj<live; $("kp"+i).textContent="→ "+r.fmt(proj)+" "+(proj>live?"▲":"▼");
+      $("kp"+i).className="proj "+(better?"up":"down"); }
+    const a=hist[r.key]; a.push(live); if(a.length>40)a.shift(); spark($("kc"+i),a,r.color);
+  });
+}
 
 // FLOW
 const FLOW=[{k:"incoming",lab:"Incoming",ic:"＋",c:"#ff5c5c"},{k:"ai",lab:"Handled by AI",ic:"🤖",c:"#36c6f0"},{k:"inprog",lab:"In progress",ic:"⚙",c:"#f5a623"},{k:"done",lab:"Completed",ic:"✓",c:"#3ddc97"},{k:"backlog",lab:"Backlog",ic:"⏳",c:"#9b6dff"}];
 $("flow").innerHTML=FLOW.map((f,i)=>`<div class="node"><div class="circ" style="background:${f.c}22;color:${f.c}">${f.ic}</div><div class="n" id="fn${i}">0</div><div class="lab">${f.lab}</div></div>`+(i<FLOW.length-1?`<div class="arrow">›</div>`:"")).join("");
 
-// DATA INGESTION feeds
-const FEEDS=[
-  {k:"personnel",lab:"Personnel / HR",ic:"👤",rate:42,c:"#3ddc97"},
-  {k:"logistics",lab:"Logistics network",ic:"🚚",rate:120,c:"#36c6f0"},
-  {k:"procurement",lab:"Procurement",ic:"📦",rate:30,c:"#f5a623"},
-  {k:"comms",lab:"Communications",ic:"✉️",rate:75,c:"#9b6dff"},
-];
-const feedState=FEEDS.map(f=>({total:0,hist:[]}));
-$("feeds").innerHTML=FEEDS.map((f,i)=>`<div class="feed"><div class="fh">${f.ic} ${f.lab}<span class="d"></span></div>
-  <div class="n" id="fdn${i}">0</div><div class="sub">records ingested</div><canvas id="fdc${i}"></canvas></div>`).join("");
+// DATA INGESTION
+const FEEDS=[{k:"personnel",lab:"Personnel / HR",ic:"👤",rate:42,c:"#3ddc97"},{k:"logistics",lab:"Logistics network",ic:"🚚",rate:120,c:"#36c6f0"},{k:"procurement",lab:"Procurement",ic:"📦",rate:30,c:"#f5a623"},{k:"comms",lab:"Communications",ic:"✉️",rate:75,c:"#9b6dff"}];
+const feedState=FEEDS.map(()=>({total:0,hist:[]}));
+$("feeds").innerHTML=FEEDS.map((f,i)=>`<div class="feed"><div class="fh">${f.ic} ${f.lab}<span class="d"></span></div><div class="n" id="fdn${i}">0</div><div class="sub">records ingested</div><canvas id="fdc${i}"></canvas></div>`).join("");
 function tickFeeds(){
   let cleaned=0,total=0;
-  FEEDS.forEach((f,i)=>{
-    const inc=Math.round(f.rate*(0.7+Math.random()*0.6));
+  FEEDS.forEach((f,i)=>{const inc=Math.round(f.rate*(0.7+Math.random()*0.6));
     feedState[i].total+=inc; feedState[i].hist.push(inc); if(feedState[i].hist.length>30)feedState[i].hist.shift();
-    $("fdn"+i).textContent=feedState[i].total.toLocaleString();
-    spark($("fdc"+i),feedState[i].hist,f.c);
-    total+=inc; cleaned+=Math.round(inc*(0.93+Math.random()*0.06));
-  });
-  $("cleanRate").textContent="validated "+Math.round(100*cleaned/Math.max(1,total))+"% · "+
-    feedState.reduce((a,b)=>a+b.total,0).toLocaleString()+" total";
+    $("fdn"+i).textContent=feedState[i].total.toLocaleString(); spark($("fdc"+i),feedState[i].hist,f.c);
+    total+=inc; cleaned+=Math.round(inc*(0.93+Math.random()*0.06));});
+  $("cleanRate").textContent="validated "+Math.round(100*cleaned/Math.max(1,total))+"% · "+feedState.reduce((a,b)=>a+b.total,0).toLocaleString()+" total";
 }
 
-// CHIPS
+// CHIPS + LEVERS
 $("chips").innerHTML=SCN.map((x,i)=>`<div class="chip ${x.path?'path':''} ${i===0?'on':''}" data-i="${i}"><span>${x.icon}</span>${x.name}</div>`).join("");
 document.querySelectorAll(".chip").forEach(el=>el.addEventListener("click",()=>chooseScenario(+el.dataset.i)));
-
-// LEVERS (structural)
-const LEVERS=[
-  {key:"ai",     lab:"🤖 Shift routine work to AI"},
-  {key:"process",lab:"⚙️ Streamline / cut low-value work"},
-  {key:"teaming",lab:"🤝 Human-machine teaming & reorg"},
-  {key:"reskill",lab:"🎓 Reskill & upskill staff"},
-];
-$("levers").innerHTML=LEVERS.map(l=>`<div class="lever"><label>${l.lab} <b id="lv_${l.key}">0%</b></label>
-  <input type="range" id="ls_${l.key}" min="0" max="100" value="0"></div>`).join("");
+const LEVERS=[{key:"ai",lab:"🤖 Shift routine work to AI"},{key:"process",lab:"⚙️ Streamline / cut low-value work"},{key:"teaming",lab:"🤝 Human-machine teaming & reorg"},{key:"reskill",lab:"🎓 Reskill & upskill staff"}];
+$("levers").innerHTML=LEVERS.map(l=>`<div class="lever"><label>${l.lab} <b id="lv_${l.key}">0%</b></label><input type="range" id="ls_${l.key}" min="0" max="100" value="0"></div>`).join("");
 LEVERS.forEach(l=>$("ls_"+l.key).addEventListener("input",e=>{decision[l.key]=+e.target.value/100;$("lv_"+l.key).textContent=e.target.value+"%";clearChips();preview();}));
 $("suSlide").addEventListener("input",e=>{decision.surge=+e.target.value/100;$("suVal").textContent=e.target.value+"%";clearChips();preview();});
 function clearChips(){document.querySelectorAll(".chip").forEach(el=>el.classList.remove("on"));}
-function syncLevers(){
-  LEVERS.forEach(l=>{$("ls_"+l.key).value=Math.round(decision[l.key]*100);$("lv_"+l.key).textContent=Math.round(decision[l.key]*100)+"%";});
-  $("suSlide").value=Math.round(decision.surge*100);$("suVal").textContent=Math.round(decision.surge*100)+"%";
-}
-function chooseScenario(i){ KEYS.forEach(k=>decision[k]=SCN[i][k]);
-  document.querySelectorAll(".chip").forEach(el=>el.classList.toggle("on",+el.dataset.i===i)); syncLevers(); preview(); }
+function syncLevers(){LEVERS.forEach(l=>{$("ls_"+l.key).value=Math.round(decision[l.key]*100);$("lv_"+l.key).textContent=Math.round(decision[l.key]*100)+"%";});$("suSlide").value=Math.round(decision.surge*100);$("suVal").textContent=Math.round(decision.surge*100)+"%";}
+function chooseScenario(i){KEYS.forEach(k=>decision[k]=SCN[i][k]);document.querySelectorAll(".chip").forEach(el=>el.classList.toggle("on",+el.dataset.i===i));syncLevers();preview();}
 
-// PATHWAY-TO-10X + BEFORE/AFTER + VERDICT
-const PATH=[{k:"automation",nm:"Automation (AI)",c:"#36c6f0"},{k:"process",nm:"Process streamlining",c:"#f5a623"},
-  {k:"teaming",nm:"Human-machine teaming",c:"#3ddc97"},{k:"reskill",nm:"Reskilling",c:"#9b6dff"}];
-const BA=[{key:"prod",fmt:v=>v.toFixed(1)+"×",lab:"Work capacity",goodUp:true},{key:"readiness",fmt:v=>v.toFixed(0)+"%",lab:"Mission readiness",goodUp:true},
-  {key:"coverage",fmt:v=>v.toFixed(0)+"%",lab:"Staffing coverage",goodUp:true},{key:"overloaded",fmt:v=>v.toFixed(0),lab:"People overstretched",goodUp:false}];
+// PATHWAY + VERDICT (projected)
+const PATH=[{k:"automation",nm:"Automation (AI)",c:"#36c6f0"},{k:"process",nm:"Process streamlining",c:"#f5a623"},{k:"teaming",nm:"Human-machine teaming",c:"#3ddc97"},{k:"reskill",nm:"Reskilling",c:"#9b6dff"}];
 function preview(){
-  const p=projectParams(decision);
-  // pathway breakdown
-  const c=p.contrib, maxMult=2.2;
-  let rows=PATH.map(x=>{const m=c[x.k];return `<div class="prow"><span class="nm">${x.nm}</span>
-    <span class="track"><i style="width:${Math.min(100,(m-1)/(maxMult-1)*100)}%;background:${x.c}"></i></span>
-    <span class="mult">×${m.toFixed(2)}</span></div>`;}).join("");
-  $("pathway").innerHTML=`<div class="ph"><span class="big">${p.prod.toFixed(1)}×</span>
-      <span class="muted">projected work capacity</span><span class="tgt">target 10×</span></div>${rows}
-    <div class="combine"><i style="width:${Math.min(100,p.prod/10*100)}%"></i></div>
-    <div class="small" style="margin-top:6px">Combined multiplier of all four structural levers — reaching 10× needs several pulled together, not AI alone.</div>`;
-  // before/after
-  $("ba").innerHTML=BA.map(m=>{const now=BASE[m.key],nx=p[m.key],rel=now!==0?(nx-now)/Math.abs(now)*100:0;
-    const better=m.goodUp?nx>now:nx<now,flat=Math.abs(rel)<2,cls=flat?"flat":(better?"up":"down"),arr=flat?"→":(nx>now?"↑":"↓");
-    return `<div class="bacard"><div class="lab">${m.lab}</div><div class="ba2"><span class="now">${m.fmt(now)}</span><span class="arw">→</span><span class="nx ${cls}">${m.fmt(nx)}</span></div><div class="ch ${cls}">${arr} ${flat?"about the same":Math.abs(rel).toFixed(0)+"% "+(better?"better":"worse")}</div></div>`;}).join("");
+  curProj=projectParams(decision); const p=curProj, c=p.contrib, maxMult=2.2;
+  $("pathway").innerHTML=`<div class="ph"><span class="big">${p.prod.toFixed(1)}×</span><span class="muted">projected capacity</span><span class="tgt">target 10×</span></div>`
+    +PATH.map(x=>{const m=c[x.k];return `<div class="prow"><span class="nm">${x.nm}</span><span class="track"><i style="width:${Math.min(100,(m-1)/(maxMult-1)*100)}%;background:${x.c}"></i></span><span class="mult">×${m.toFixed(2)}</span></div>`;}).join("")
+    +`<div class="combine"><i style="width:${Math.min(100,p.prod/10*100)}%"></i></div>
+      <div class="small" style="margin-top:6px">10× needs several levers together — AI alone ≈ 2×.</div>`;
   const v=verdict(p),box=$("verdict"); box.className="verdict "+v.level; $("vIc").textContent=v.icon; $("vHead").textContent=v.head; $("vText").textContent=v.text;
+  updateKPIs();
 }
 function verdict(k){
   const issues=[];
-  if(k.readiness<58) issues.push("mission readiness drops to a risky level");
+  if(k.readiness<58) issues.push("readiness drops to a risky level");
   else if(k.readiness<78) issues.push("readiness becomes strained");
-  if(k.overloaded>40) issues.push(`about ${k.overloaded} people would be overloaded`);
-  else if(k.overloaded>20) issues.push(`about ${k.overloaded} people would be stretched thin`);
-  if(k.coverage<90) issues.push("staffing coverage falls short of the workload");
+  if(k.overloaded>40) issues.push(`~${k.overloaded} people overloaded`);
+  else if(k.overloaded>20) issues.push(`~${k.overloaded} people stretched thin`);
+  if(k.coverage<90) issues.push("staffing coverage falls short");
   let level,icon,head;
   if(k.readiness>=78&&k.overloaded<=20){level="good";icon="✅";head="Recommended";}
   else if(k.readiness>=58&&k.overloaded<=40){level="warn";icon="⚠️";head="Proceed with caution";}
   else {level="bad";icon="⛔";head="High risk";}
-  const upside=k.prod>BASE.prod*1.15?` Upside: work capacity rises to ${k.prod.toFixed(1)}× (from ${BASE.prod.toFixed(1)}× today).`:"";
-  return {level,icon,head,text:(issues.length?"Watch-outs: "+issues.join("; ")+".":"No major downside detected — readiness and staffing hold up.")+upside};
+  const up=k.prod>BASE.prod*1.15?` Work capacity → ${k.prod.toFixed(1)}× (today ${BASE.prod.toFixed(1)}×).`:"";
+  return {level,icon,head,text:(issues.length?"Watch-outs: "+issues.join("; ")+".":"No major downside — readiness & staffing hold up.")+up};
 }
-function runDecision(){ eng.setLevers(decision); try{$("twin").contentWindow.postMessage({t:"levers",...decision},"*");}catch(e){}
-  const b=$("runBtn"); b.textContent="Running… ▶"; setTimeout(()=>b.textContent="Run This Decision ▶",1200); }
+function runDecision(){eng.setLevers(decision);try{$("twin").contentWindow.postMessage({t:"levers",...decision},"*");}catch(e){}
+  const b=$("runBtn");b.textContent="Running… ▶";setTimeout(()=>b.textContent="Run This Decision ▶",1200);}
 $("runBtn").addEventListener("click",runDecision);
 $("twin").addEventListener("load",()=>{try{$("twin").contentWindow.postMessage({t:"levers",...decision},"*");}catch(e){}});
 
 // ============================================================================
-//  SYNTHETIC DATA GENERATION (distribution & correlation preserving, PII-stripped)
+//  SYNTHETIC DATA GENERATION (covariance-preserving, PII-stripped)
 // ============================================================================
 function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
-const NUMCOLS=["tenure","skill","perf"]; // numeric, kept (no PII)
-// build a "real" HR table (synthetic-but-sensitive: has PII we will strip)
-function makeReal(n){
-  const sd=[5,12,14], corr=[[1,.35,.25],[.35,1,.6],[.25,.6,1]], mean=[9,70,72];
-  const L=chol(cov(corr,sd)); const rows=[];
-  for(let i=0;i<n;i++){
-    const z=[gauss(),gauss(),gauss()], x=mul(L,z);
-    rows.push({ name:"Emp#"+(1000+i), ssn:"***-**-"+(1000+(Math.random()*9000|0)), dob:"19"+(60+(Math.random()*40|0)), // PII (to be stripped)
-      dir:DIRS[Math.random()*4|0],
-      tenure:clamp(mean[0]+x[0],0,40), skill:clamp(mean[1]+x[1],0,100), perf:clamp(mean[2]+x[2],0,100) });
-  }
-  return rows;
-}
-function cov(corr,sd){return corr.map((r,i)=>r.map((c,j)=>c*sd[i]*sd[j]));}
-function chol(A){const n=A.length,L=Array.from({length:n},()=>Array(n).fill(0));
-  for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let s=A[i][j];for(let k=0;k<j;k++)s-=L[i][k]*L[j][k];
-    L[i][j]= i===j? Math.sqrt(Math.max(1e-9,s)) : s/L[j][j];} return L;}
+const NUMCOLS=["tenure","skill","perf"];
+function cov(c,sd){return c.map((r,i)=>r.map((x,j)=>x*sd[i]*sd[j]));}
+function chol(A){const n=A.length,L=Array.from({length:n},()=>Array(n).fill(0));for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let s=A[i][j];for(let k=0;k<j;k++)s-=L[i][k]*L[j][k];L[i][j]=i===j?Math.sqrt(Math.max(1e-9,s)):s/L[j][j];}return L;}
 function mul(L,z){return L.map(r=>r.reduce((a,v,j)=>a+v*z[j],0));}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function meanvec(rows,keys){return keys.map(k=>rows.reduce((a,r)=>a+r[k],0)/rows.length);}
-function covmat(rows,keys){const m=meanvec(rows,keys),n=keys.length,C=Array.from({length:n},()=>Array(n).fill(0));
-  rows.forEach(r=>{for(let i=0;i<n;i++)for(let j=0;j<n;j++)C[i][j]+=(r[keys[i]]-m[i])*(r[keys[j]]-m[j]);});
-  for(let i=0;i<n;i++)for(let j=0;j<n;j++)C[i][j]/=(rows.length-1); return {m,C};}
+function covmat(rows,keys){const m=meanvec(rows,keys),n=keys.length,C=Array.from({length:n},()=>Array(n).fill(0));rows.forEach(r=>{for(let i=0;i<n;i++)for(let j=0;j<n;j++)C[i][j]+=(r[keys[i]]-m[i])*(r[keys[j]]-m[j]);});for(let i=0;i<n;i++)for(let j=0;j<n;j++)C[i][j]/=(rows.length-1);return {m,C};}
 function std(rows,k){const m=rows.reduce((a,r)=>a+r[k],0)/rows.length;return Math.sqrt(rows.reduce((a,r)=>a+(r[k]-m)**2,0)/rows.length);}
-function corr(rows,a,b){const ma=rows.reduce((s,r)=>s+r[a],0)/rows.length,mb=rows.reduce((s,r)=>s+r[b],0)/rows.length;
-  let n=0,da=0,db=0;rows.forEach(r=>{n+=(r[a]-ma)*(r[b]-mb);da+=(r[a]-ma)**2;db+=(r[b]-mb)**2;});return n/Math.sqrt(da*db);}
-// synthesize from real: preserve mean/cov of numeric cols + categorical proportions, drop PII
-function synthesize(real,n){
-  const {m,C}=covmat(real,NUMCOLS_S()), L=chol(C);
-  const props={}; real.forEach(r=>props[r.dir]=(props[r.dir]||0)+1);
-  const cum=[]; let acc=0; DIRS.forEach(d=>{acc+=(props[d]||0)/real.length;cum.push([d,acc]);});
-  const out=[];
-  for(let i=0;i<n;i++){
-    const z=[gauss(),gauss(),gauss()], x=mul(L,z), u=Math.random();
-    out.push({ dir:(cum.find(c=>u<=c[1])||cum[cum.length-1])[0],
-      tenure:clamp(m[0]+x[0],0,40), skill:clamp(m[1]+x[1],0,100), perf:clamp(m[2]+x[2],0,100) }); // NO PII fields
-  }
-  return out;
-}
-function NUMCOLS_S(){return NUMCOLS;}
+function corr(rows,a,b){const ma=rows.reduce((s,r)=>s+r[a],0)/rows.length,mb=rows.reduce((s,r)=>s+r[b],0)/rows.length;let n=0,da=0,db=0;rows.forEach(r=>{n+=(r[a]-ma)*(r[b]-mb);da+=(r[a]-ma)**2;db+=(r[b]-mb)**2;});return n/Math.sqrt(da*db);}
+function makeReal(n){const sd=[5,12,14],c=[[1,.35,.25],[.35,1,.6],[.25,.6,1]],mean=[9,70,72],L=chol(cov(c,sd)),rows=[];
+  for(let i=0;i<n;i++){const z=[gauss(),gauss(),gauss()],x=mul(L,z);
+    rows.push({name:"Emp#"+(1000+i),ssn:"***-**-"+(1000+(Math.random()*9000|0)),dob:"19"+(60+(Math.random()*40|0)),dir:DIRS[Math.random()*4|0],
+      tenure:clamp(mean[0]+x[0],0,40),skill:clamp(mean[1]+x[1],0,100),perf:clamp(mean[2]+x[2],0,100)});}
+  return rows;}
+function synthesize(real,n){const {m,C}=covmat(real,NUMCOLS),L=chol(C),props={};real.forEach(r=>props[r.dir]=(props[r.dir]||0)+1);
+  const cum=[];let acc=0;DIRS.forEach(d=>{acc+=(props[d]||0)/real.length;cum.push([d,acc]);});const out=[];
+  for(let i=0;i<n;i++){const z=[gauss(),gauss(),gauss()],x=mul(L,z),u=Math.random();
+    out.push({dir:(cum.find(c=>u<=c[1])||cum[cum.length-1])[0],tenure:clamp(m[0]+x[0],0,40),skill:clamp(m[1]+x[1],0,100),perf:clamp(m[2]+x[2],0,100)});}
+  return out;}
 let REAL=makeReal(400), SYN=synthesize(REAL,400);
 function renderSyn(){
   const rows=[["Tenure (yrs)","tenure"],["Skill score","skill"],["Performance","perf"]];
-  let html=`<tr><th>Attribute</th><th class="num">Real (mean±sd)</th><th class="num">Synthetic (mean±sd)</th></tr>`;
-  rows.forEach(([lab,k])=>{html+=`<tr><td>${lab}</td>
-    <td class="num">${(REAL.reduce((a,r)=>a+r[k],0)/REAL.length).toFixed(1)} ± ${std(REAL,k).toFixed(1)}</td>
-    <td class="num">${(SYN.reduce((a,r)=>a+r[k],0)/SYN.length).toFixed(1)} ± ${std(SYN,k).toFixed(1)}</td></tr>`;});
-  html+=`<tr><td>Corr(skill, performance)</td><td class="num">${corr(REAL,"skill","perf").toFixed(2)}</td><td class="num">${corr(SYN,"skill","perf").toFixed(2)}</td></tr>`;
-  html+=`<tr><td>Corr(tenure, skill)</td><td class="num">${corr(REAL,"tenure","skill").toFixed(2)}</td><td class="num">${corr(SYN,"tenure","skill").toFixed(2)}</td></tr>`;
-  $("statTable").innerHTML=html;
-  // privacy
+  let h=`<tr><th>Attribute</th><th class="num">Real (mean±sd)</th><th class="num">Synthetic (mean±sd)</th></tr>`;
+  rows.forEach(([lab,k])=>{h+=`<tr><td>${lab}</td><td class="num">${(REAL.reduce((a,r)=>a+r[k],0)/REAL.length).toFixed(1)} ± ${std(REAL,k).toFixed(1)}</td><td class="num">${(SYN.reduce((a,r)=>a+r[k],0)/SYN.length).toFixed(1)} ± ${std(SYN,k).toFixed(1)}</td></tr>`;});
+  h+=`<tr><td>Corr(skill, performance)</td><td class="num">${corr(REAL,"skill","perf").toFixed(2)}</td><td class="num">${corr(SYN,"skill","perf").toFixed(2)}</td></tr>`;
+  h+=`<tr><td>Corr(tenure, skill)</td><td class="num">${corr(REAL,"tenure","skill").toFixed(2)}</td><td class="num">${corr(SYN,"tenure","skill").toFixed(2)}</td></tr>`;
+  $("statTable").innerHTML=h;
   const piiReal=Object.keys(REAL[0]).filter(k=>["name","ssn","dob"].includes(k)).length;
   const piiSyn=Object.keys(SYN[0]).filter(k=>["name","ssn","dob"].includes(k)).length;
-  $("privacy").innerHTML=`<div class="ok">✓ PII removed</div>
-    <div>Real records carry ${piiReal} PII fields (name, SSN, DOB). Synthetic records carry <b>${piiSyn}</b>.</div>
-    <div>✓ ${SYN.length} synthetic records generated; none copied from a real person.</div>
-    <div>✓ Distributions & correlations preserved (see table) — safe for workforce analysis.</div>`;
+  $("privacy").innerHTML=`<div class="ok">✓ PII removed</div><div>Real records carry ${piiReal} PII fields (name, SSN, DOB). Synthetic carry <b>${piiSyn}</b>.</div><div>✓ ${SYN.length} synthetic records; none copied from a real person.</div><div>✓ Distributions & correlations preserved (see table).</div>`;
   drawHist();
 }
-function drawHist(){
-  const cv=$("hist"),dpr=devicePixelRatio||1,w=cv.clientWidth*dpr,h=cv.height*dpr; cv.width=w;cv.height=h;
-  const x=cv.getContext("2d"); x.clearRect(0,0,w,h);
-  const bins=14,lo=30,hi=100,bw=(hi-lo)/bins; const hr=Array(bins).fill(0),hs=Array(bins).fill(0);
-  REAL.forEach(r=>{let b=Math.min(bins-1,Math.max(0,((r.skill-lo)/bw)|0));hr[b]++;});
-  SYN.forEach(r=>{let b=Math.min(bins-1,Math.max(0,((r.skill-lo)/bw)|0));hs[b]++;});
-  const mx=Math.max(...hr,...hs),pad=8*dpr,bwid=(w-2*pad)/bins;
-  for(let i=0;i<bins;i++){
-    const xr=pad+i*bwid;
-    const hh=h-2*pad;
-    x.fillStyle="#2f6df6aa"; const a=hh*hr[i]/mx; x.fillRect(xr+2,h-pad-a,bwid/2-2,a);
-    x.fillStyle="#36c6f0aa"; const b=hh*hs[i]/mx; x.fillRect(xr+bwid/2,h-pad-b,bwid/2-2,b);
-  }
-  x.fillStyle="#8aa0c0"; x.font=(11*dpr)+"px sans-serif"; x.fillText("■ real",pad,12*dpr); x.fillStyle="#36c6f0"; x.fillText("   ■ synthetic",pad,12*dpr);
-}
+function drawHist(){const cv=$("hist"),dpr=devicePixelRatio||1,w=cv.clientWidth*dpr,h=cv.height*dpr;cv.width=w;cv.height=h;const x=cv.getContext("2d");x.clearRect(0,0,w,h);
+  const bins=14,lo=30,hi=100,bw=(hi-lo)/bins,hr=Array(bins).fill(0),hs=Array(bins).fill(0);
+  REAL.forEach(r=>{let b=Math.min(bins-1,Math.max(0,((r.skill-lo)/bw)|0));hr[b]++;});SYN.forEach(r=>{let b=Math.min(bins-1,Math.max(0,((r.skill-lo)/bw)|0));hs[b]++;});
+  const mx=Math.max(...hr,...hs),pad=8*dpr,bwid=(w-2*pad)/bins,hh=h-2*pad;
+  for(let i=0;i<bins;i++){const xr=pad+i*bwid;x.fillStyle="#2f6df6aa";const a=hh*hr[i]/mx;x.fillRect(xr+2,h-pad-a,bwid/2-2,a);x.fillStyle="#36c6f0aa";const b=hh*hs[i]/mx;x.fillRect(xr+bwid/2,h-pad-b,bwid/2-2,b);}
+  x.fillStyle="#8aa0c0";x.font=(11*dpr)+"px sans-serif";x.fillText("■ real",pad,12*dpr);x.fillStyle="#36c6f0";x.fillText("   ■ synthetic",pad,12*dpr);}
 $("regen").addEventListener("click",()=>{SYN=synthesize(REAL,400);renderSyn();});
 
 // ============================================================================
 //  live loop
 // ============================================================================
-function refresh(){
-  const st=eng.state(); if(!st.kpi) return; const k=st.kpi;
-  $("wk").textContent=st.week;
-  RAIL.forEach((r,i)=>{$("rv"+i).textContent=r.fmt(k[r.key]);$("rv"+i).style.color=r.color;
-    const a=hist[r.key];a.push(k[r.key]);if(a.length>40)a.shift();spark($("rc"+i),a,r.color);});
-  FLOW.forEach((f,i)=>$("fn"+i).textContent=k.flow[f.k].toLocaleString());
-}
+function refresh(){const st=eng.state(); if(!st.kpi) return;
+  $("wk").textContent=st.week; updateKPIs();
+  FLOW.forEach((f,i)=>$("fn"+i).textContent=st.kpi.flow[f.k].toLocaleString());}
 function tick(){ if(playing){eng.step();tickFeeds();} refresh(); }
 $("playBtn").addEventListener("click",e=>{playing=!playing;e.target.textContent=playing?"⏸ Live":"▶ Paused";});
 function clock(){const d=new Date();$("clock").textContent=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});}
