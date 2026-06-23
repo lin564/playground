@@ -21,7 +21,8 @@ export function init(Constants) {
 
     Constants.UserBehaviorDirectory = "behaviors/default";
     Constants.UserBehaviorModules = [
-        "csmLights.js"
+        "csmLights.js",
+        "animation.js"
     ];
 
     Constants.DefaultCards = [
@@ -55,5 +56,26 @@ export function init(Constants) {
                 behaviorModules: ["Light"],
             }
         }
+
+        // ---------------------------------------------------------------------
+        // Example: a Blender-authored animated model. Drop your exported .glb in
+        // ./assets, uncomment this card, and set dataLocation to its path. The
+        // model auto-plays its first clip (looped, synced for all users); with
+        // the "Animation" behavior + "pointer" layer, clicking it steps through
+        // the clips. See docs/BLENDER.md for the export pipeline.
+        //
+        // ,{
+        //     card: {
+        //         name: "animated model",
+        //         type: "3d",
+        //         modelType: "glb",
+        //         dataLocation: "./assets/my-model.glb",
+        //         layers: ["pointer"],
+        //         behaviorModules: ["Animation"],
+        //         translation: [0, 0, -6],
+        //         scale: [1, 1, 1],
+        //         shadow: true,
+        //     }
+        // }
     ];
 }
