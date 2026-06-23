@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DTO — Organizational Digital Twin (Live Simulation)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#070f1e;color:#eaf1ff;
+    font:13px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased;}
+  #c{display:block;position:fixed;inset:0;}
+  .panel{position:fixed;background:rgba(16,28,50,.86);border:1px solid #26395d;border-radius:12px;
+    backdrop-filter:blur(6px);box-shadow:0 8px 30px rgba(0,0,0,.4);}
+  /* top KPI bar */
+  #kpibar{top:12px;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:10px 12px;}
+  .kpi{min-width:118px;}
+  .kpi .l{color:#8aa0c6;font-size:10px;letter-spacing:.08em;}
+  .kpi .v{font-size:22px;font-weight:800;line-height:1.1;margin-top:2px;}
+  .kpi .s{color:#7f93b5;font-size:10px;margin-top:1px;}
+  /* title */
+  #title{top:14px;left:16px;padding:10px 14px;}
+  #title h1{margin:0;font-size:15px;}
+  #title .sub{color:#5fa8ff;font-size:11px;margin-top:2px;}
+  #clock{margin-top:6px;color:#9fb3d6;font-size:12px;}
+  #clock b{color:#eaf1ff;}
+  /* legend */
+  #legend{left:16px;bottom:14px;padding:10px 12px;font-size:11px;color:#b9c8e6;}
+  #legend .row{display:flex;align-items:center;gap:7px;margin:3px 0;}
+  #legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  /* controls */
+  #controls{bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:10px 12px;flex-wrap:wrap;justify-content:center;max-width:92vw;}
+  button{background:#15264400;color:#dce8ff;border:1px solid #2c4163;border-radius:8px;padding:8px 11px;font-size:12px;cursor:pointer;}
+  button:hover{border-color:#5fa8ff;background:#193058;}
+  button.on{background:#19407a;border-color:#5fa8ff;color:#fff;}
+  .sep{width:1px;height:24px;background:#2c4163;margin:0 2px;}
+  .scn{font-weight:600;}
+  /* agent inspector */
+  #inspect{right:14px;top:14px;width:230px;padding:12px 14px;display:none;}
+  #inspect h3{margin:0 0 8px;font-size:13px;color:#9fb3d6;letter-spacing:.04em;}
+  #inspect .kv{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}
+  #inspect .kv span:first-child{color:#8aa0c6;}
+  #inspect .bar{height:7px;background:#0a1426;border-radius:4px;margin:3px 0 8px;overflow:hidden;}
+  #inspect .bar>i{display:block;height:100%;border-radius:4px;}
+  #tooltip{position:fixed;pointer-events:none;background:#0c1830;border:1px solid #2c4163;border-radius:6px;
+    padding:5px 8px;font-size:11px;color:#dce8ff;display:none;z-index:9;white-space:nowrap;}
+  #help{right:14px;bottom:14px;padding:8px 12px;font-size:11px;color:#8aa0c6;}
+  #badge{right:14px;bottom:54px;padding:5px 9px;font-size:10px;color:#9fb3d6;border-radius:999px;}
+  #badge b{color:#36d399;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="panel" id="title">
+  <h1>Digital Twin of the Organization</h1>
+  <div class="sub">DLA26BZ03-NV011 · UltiSim Inc. · live agent-based simulation</div>
+  <div id="clock">Week <b id="wk">0</b> · scenario: <b id="scnLbl">Baseline Steady-State</b></div>
+</div>
+
+<div class="panel" id="kpibar"></div>
+
+<div class="panel" id="inspect">
+  <h3>AGENT INSPECTOR</h3>
+  <div id="inspectBody"></div>
+</div>
+
+<div class="panel" id="legend">
+  <div class="row"><span class="sw" style="background:#36d399"></span> healthy load</div>
+  <div class="row"><span class="sw" style="background:#36e0d0"></span> AI-augmented</div>
+  <div class="row"><span class="sw" style="background:#fbbd23"></span> high load</div>
+  <div class="row"><span class="sw" style="background:#f87272"></span> overloaded</div>
+  <div class="row"><span class="sw" style="background:#5b6b86"></span> deployed (surge)</div>
+  <div style="margin-top:6px;color:#7f93b5">bar height = workload</div>
+</div>
+
+<div class="panel" id="controls">
+  <button id="playBtn" class="on">⏸ Pause</button>
+  <button id="speedBtn">▶ 1×</button>
+  <span class="sep"></span>
+  <span class="scn" style="color:#8aa0c6">Inject scenario:</span>
+  <button data-scn="0" class="on">Baseline</button>
+  <button data-scn="1">Surge Deploy</button>
+  <button data-scn="2">Supply Shock</button>
+  <button data-scn="3">Geopolitical</button>
+  <button data-scn="4">AI Augment</button>
+</div>
+
+<div class="panel" id="badge">windows: <b id="winCount">1</b> · <span id="syncMode">standalone</span></div>
+<div class="panel" id="help">drag to orbit · scroll to zoom · click an agent to inspect</div>
+<div id="tooltip"></div>
+
+<script src="./vendor/three.min.js"></script>
+<script>
+"use strict";
+// ============================================================================
+//  Digital Twin of the Organization — agent-based simulation (offline, no backend)
+//  KPIs EMERGE from per-agent state each tick; scenarios ramp in over weeks.
+// ============================================================================
+const DIRS = ["J1 Personnel","J3 Operations","J6 Information","J7 Readiness"];
+const PER  = 60;                       // agents per directorate
+const POP  = DIRS.length * PER;        // 240
+const SCENARIOS = [
+  { name:"Baseline Steady-State",    surge:0.00, disruption:0.05, geo:0.10, ai:0.20 },
+  { name:"Surge Deployment",         surge:0.35, disruption:0.15, geo:0.30, ai:0.25 },
+  { name:"Supply-Chain Disruption",  surge:0.10, disruption:0.60, geo:0.40, ai:0.30 },
+  { name:"Geopolitical Shift (GPC)", surge:0.25, disruption:0.45, geo:0.75, ai:0.35 },
+  { name:"AI-Augmented Workforce",   surge:0.10, disruption:0.20, geo:0.30, ai:0.85 },
+];
+
+// ---- deterministic PRNG -----------------------------------------------------
+let _seed = 0x2545f491;
+function rand(){ _seed = (Math.imul(_seed,1664525)+1013904223)>>>0; return _seed/4294967296; }
+
+// ---- build the workforce + spatial layout ----------------------------------
+// districts laid out in 4 quadrants on the ground; agents in a grid per district.
+const COLS=10, ROWS=6, GAP=2.0;
+const DCENT=[[-17,-17],[17,-17],[-17,17],[17,17]];
+const agents=[];
+for(let d=0; d<DIRS.length; d++){
+  const [cx,cz]=DCENT[d];
+  for(let k=0;k<PER;k++){
+    const col=k%COLS, row=(k/COLS)|0;
+    const x=cx+(col-(COLS-1)/2)*GAP;
+    const z=cz+(row-(ROWS-1)/2)*GAP;
+    agents.push({
+      dir:d, x, z,
+      skill:0.45+rand()*0.5,
+      automatable:0.30+rand()*0.6,
+      reserve: rand()<0.30,        // backfill pool — not deployed on surge
+      deployed:false,
+      load:0.55, fatigue:0.0, aiAbsorb:0.12,
+      vh:0.8, vc:new THREE.Color(0x36d399),  // visual height + color (lerped)
+    });
+  }
+}
+
+// ---- scenario state (targets ramp -> current for gradual roll-out) ----------
+let scnIndex=0;
+const cur={surge:0,disruption:0.05,geo:0.10,ai:0.20};
+const tgt={...SCENARIOS[0]};
+let week=0, syntheticRecords=0;
+
+function setScenario(i, broadcast){
+  scnIndex=i; const s=SCENARIOS[i];
+  tgt.surge=s.surge; tgt.disruption=s.disruption; tgt.geo=s.geo; tgt.ai=s.ai;
+  document.getElementById("scnLbl").textContent=s.name;
+  document.querySelectorAll('#controls [data-scn]').forEach(b=>
+    b.classList.toggle('on', +b.dataset.scn===i));
+  if(broadcast) bcast();
+}
+
+// ---- one simulation tick (a "week") ----------------------------------------
+function stepSim(){
+  week++;
+  // ramp current parameters toward the injected scenario
+  for(const k of ["surge","disruption","geo","ai"]) cur[k]+=(tgt[k]-cur[k])*0.15;
+
+  // deployment: number of LINE agents pulled out (reserves stay as backfill)
+  const desired=Math.round(cur.surge*POP);
+  let deployedNow=0;
+  // first pass count
+  for(const a of agents) if(a.deployed) deployedNow++;
+  // adjust gradually (±6/wk) toward desired among non-reserve agents
+  const stepN=6;
+  if(deployedNow<desired){
+    let add=Math.min(stepN, desired-deployedNow);
+    for(const a of agents){ if(add<=0)break; if(!a.deployed && !a.reserve){a.deployed=true; add--;} }
+  } else if(deployedNow>desired){
+    let rem=Math.min(stepN, deployedNow-desired);
+    for(let i=agents.length-1;i>=0 && rem>0;i--){ if(agents[i].deployed){agents[i].deployed=false; rem--;} }
+  }
+
+  // per-directorate demand allocation -> per-agent load (emergent)
+  const demandFactor = 1 + 0.95*cur.disruption + 0.30*cur.geo;
+  const dirActive=[0,0,0,0], dirSize=[PER,PER,PER,PER];
+  for(const a of agents) if(!a.deployed) dirActive[a.dir]++;
+
+  let totalCapUsed=0, totalWorkDone=0, baselineLabor=0, overloaded=0, healthy=0, deployed=0, aiAbsSum=0;
+
+  for(const a of agents){
+    if(a.deployed){ deployed++; a.fatigue=Math.max(0,a.fatigue-0.05); continue; }
+    const redistribute = dirSize[a.dir]/Math.max(1,dirActive[a.dir]); // fewer active -> each carries more
+    a.aiAbsorb = a.automatable*cur.ai;                                // share of this agent's work AI absorbs
+    let load = 0.55 * demandFactor * (1 - a.aiAbsorb) * redistribute;
+    load *= (1 + a.fatigue*0.30);                                     // fatigue makes work cost more
+    load /= Math.max(0.55, a.skill) / 0.70;                           // higher skill -> lower relative load
+    a.load = load;
+    // fatigue dynamics
+    if(load>0.90) a.fatigue=Math.min(1,a.fatigue+0.04);
+    else          a.fatigue=Math.max(0,a.fatigue-0.03);
+    // emergent accounting
+    const done = Math.min(load,1.0);                                  // capped by capacity
+    totalWorkDone += done * a.skill;
+    totalCapUsed  += a.skill;
+    baselineLabor += 0.55;                                            // labor a baseline org would spend
+    aiAbsSum += a.aiAbsorb;
+    if(load>1.0) overloaded++;
+    else if(load<=0.90 && a.fatigue<0.5) healthy++;
+  }
+
+  const active = POP - deployed;
+  const avgAi = active? aiAbsSum/active : 0;
+  syntheticRecords += 2500 + Math.floor(rand()*500);
+
+  // ---- emergent KPIs -------------------------------------------------------
+  // productivity: same mission work done with less human labor (automation) and
+  // human-machine teaming, dragged by overload.
+  const laborLever = 1/Math.max(0.15, 1-avgAi);          // labor freed by automation
+  const teaming = 1 + 9*Math.pow(cur.ai,1.4);            // human-machine teaming efficiency
+  const overloadDrag = 1 - 0.5*(overloaded/POP);         // congestion penalty
+  const prod = Math.max(1, laborLever * teaming * overloadDrag);
+
+  // surge backfill coverage: do we still have enough active capacity for demand?
+  const demandHuman = baselineLabor*demandFactor*(1-avgAi);
+  const coverage = Math.min(100, 100*totalCapUsed/Math.max(1,demandHuman));
+  // readiness blends healthy share + coverage - geopolitical/disruption drag
+  const readiness = Math.max(0, Math.min(100,
+      0.55*(100*healthy/POP) + 0.30*coverage + 0.15*(100-(cur.disruption*60+cur.geo*40))));
+  const automation = avgAi*100;
+  const backlog = overloaded; // # of agents over capacity = work piling up
+
+  KPI = { prod, readiness, coverage, automation, overloaded, deployed, active };
+  updateHUD();
+}
+
+// ============================================================================
+//  Rendering (Three.js)
+// ============================================================================
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById("c"),antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+if("outputEncoding" in renderer) renderer.outputEncoding=THREE.sRGBEncoding;
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x070f1e);
+scene.fog=new THREE.Fog(0x070f1e,70,170);
+scene.add(new THREE.HemisphereLight(0xbcd4ff,0x0b1426,0.95));
+const sun=new THREE.DirectionalLight(0xffffff,0.6); sun.position.set(20,40,15); scene.add(sun);
+
+// ground + district pads
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(140,140),
+  new THREE.MeshStandardMaterial({color:0x0c1830,roughness:1}));
+ground.rotation.x=-Math.PI/2; ground.position.y=0; scene.add(ground);
+scene.add(new THREE.GridHelper(140,70,0x213352,0x16243d));
+for(let d=0; d<4; d++){
+  const [cx,cz]=DCENT[d];
+  const pad=new THREE.Mesh(new THREE.PlaneGeometry(COLS*GAP+3, ROWS*GAP+3),
+    new THREE.MeshStandardMaterial({color:0x12233f,roughness:1}));
+  pad.rotation.x=-Math.PI/2; pad.position.set(cx,0.02,cz); scene.add(pad);
+  // district label
+  const cv=document.createElement("canvas"); cv.width=256; cv.height=64;
+  const cx2=cv.getContext("2d"); cx2.fillStyle="#9fb3d6"; cx2.font="bold 34px sans-serif";
+  cx2.textAlign="center"; cx2.fillText(DIRS[d],128,44);
+  const tx=new THREE.CanvasTexture(cv);
+  const lab=new THREE.Mesh(new THREE.PlaneGeometry(8,2),
+    new THREE.MeshBasicMaterial({map:tx,transparent:true}));
+  lab.rotation.x=-Math.PI/2; lab.position.set(cx, 0.05, cz - (ROWS*GAP)/2 - 2.2); scene.add(lab);
+}
+
+// instanced agents
+const agentGeo=new THREE.BoxGeometry(1,1,1);
+const agentMat=new THREE.MeshStandardMaterial({roughness:0.55,metalness:0.05});
+const mesh=new THREE.InstancedMesh(agentGeo,agentMat,POP);
+mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+scene.add(mesh);
+const dummy=new THREE.Object3D();
+// init colors
+for(let i=0;i<POP;i++) mesh.setColorAt(i,agents[i].vc);
+
+// color targets
+const C_HEALTHY=new THREE.Color(0x36d399), C_AI=new THREE.Color(0x36e0d0),
+      C_HIGH=new THREE.Color(0xfbbd23), C_OVER=new THREE.Color(0xf87272),
+      C_DEP=new THREE.Color(0x5b6b86);
+const _tmp=new THREE.Color();
+function targetColor(a){
+  if(a.deployed) return C_DEP;
+  if(a.load>1.0) return C_OVER;
+  if(a.load>0.88) return C_HIGH;
+  // healthy -> blend toward AI-augmented by how much AI is absorbing
+  return _tmp.copy(C_HEALTHY).lerp(C_AI, Math.min(1,a.aiAbsorb*1.6));
+}
+function targetHeight(a){ return a.deployed ? 0.2 : 0.4 + Math.min(1.6,a.load)*2.0; }
+
+function updateVisuals(dt){
+  for(let i=0;i<POP;i++){
+    const a=agents[i];
+    a.vh += (targetHeight(a)-a.vh)*Math.min(1,dt*4);
+    a.vc.lerp(targetColor(a), Math.min(1,dt*4));
+    dummy.position.set(a.x, a.vh/2+0.05, a.z);
+    dummy.scale.set(0.85, a.vh, 0.85);
+    dummy.rotation.set(0,0,0);
+    if(i===selected){ dummy.scale.x=1.05; dummy.scale.z=1.05; }
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i,dummy.matrix);
+    mesh.setColorAt(i,a.vc);
+  }
+  mesh.instanceMatrix.needsUpdate=true;
+  if(mesh.instanceColor) mesh.instanceColor.needsUpdate=true;
+}
+
+// ---- orbit camera (manual, no external module) -----------------------------
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,400);
+const target=new THREE.Vector3(0,2,0);
+let radius=78, theta=0.7, phi=0.92;
+function placeCam(){
+  phi=Math.max(0.18,Math.min(1.45,phi));
+  radius=Math.max(28,Math.min(150,radius));
+  camera.position.set(
+    target.x+radius*Math.sin(phi)*Math.cos(theta),
+    target.y+radius*Math.cos(phi),
+    target.z+radius*Math.sin(phi)*Math.sin(theta));
+  camera.lookAt(target);
+}
+placeCam();
+let dragging=false,px=0,py=0;
+const cvs=renderer.domElement;
+cvs.addEventListener("pointerdown",e=>{dragging=true;px=e.clientX;py=e.clientY;movedDist=0;});
+addEventListener("pointerup",()=>{dragging=false;});
+addEventListener("pointermove",e=>{
+  if(dragging){
+    const dx=e.clientX-px, dy=e.clientY-py; px=e.clientX; py=e.clientY;
+    movedDist+=Math.abs(dx)+Math.abs(dy);
+    theta+=dx*0.005; phi-=dy*0.005; placeCam();
+  }
+  onHover(e);
+});
+cvs.addEventListener("wheel",e=>{ e.preventDefault(); radius*=(1+e.deltaY*0.0012); placeCam(); },{passive:false});
+
+// ---- picking (hover tooltip + click inspect) -------------------------------
+const ray=new THREE.Raycaster(); const ndc=new THREE.Vector2();
+let selected=-1, movedDist=0;
+const tooltip=document.getElementById("tooltip");
+function pick(e){
+  ndc.x=(e.clientX/innerWidth)*2-1; ndc.y=-(e.clientY/innerHeight)*2+1;
+  ray.setFromCamera(ndc,camera);
+  const hit=ray.intersectObject(mesh,false);
+  return hit.length? hit[0].instanceId : -1;
+}
+function onHover(e){
+  const id=pick(e);
+  if(id>=0){
+    const a=agents[id];
+    tooltip.style.display="block";
+    tooltip.style.left=(e.clientX+12)+"px"; tooltip.style.top=(e.clientY+12)+"px";
+    tooltip.innerHTML=`${DIRS[a.dir]} · ${a.deployed?"DEPLOYED":(a.load>1?"OVERLOADED":a.load>0.88?"HIGH LOAD":"OK")}`
+      +` · load ${(a.load*100|0)}%`;
+  } else tooltip.style.display="none";
+}
+cvs.addEventListener("click",e=>{
+  if(movedDist>6) return;            // ignore drags
+  const id=pick(e);
+  selected=id;
+  const box=document.getElementById("inspect");
+  if(id<0){ box.style.display="none"; return; }
+  const a=agents[id];
+  box.style.display="block";
+  const status=a.deployed?"Deployed (surge)":a.load>1?"Overloaded":a.load>0.88?"High load":"Healthy";
+  const bar=(v,c)=>`<div class="bar"><i style="width:${Math.min(100,v*100)|0}%;background:${c}"></i></div>`;
+  document.getElementById("inspectBody").innerHTML=
+    `<div class="kv"><span>Directorate</span><span>${DIRS[a.dir]}</span></div>`
+   +`<div class="kv"><span>Status</span><span>${status}</span></div>`
+   +`<div class="kv"><span>Role</span><span>${a.reserve?"Reserve / backfill":"Line"}</span></div>`
+   +`<div class="kv"><span>Skill</span><span>${(a.skill*100|0)}%</span></div>${bar(a.skill,"#5fa8ff")}`
+   +`<div class="kv"><span>Workload</span><span>${(a.load*100|0)}%</span></div>${bar(a.load,a.load>1?"#f87272":a.load>0.88?"#fbbd23":"#36d399")}`
+   +`<div class="kv"><span>AI-absorbed work</span><span>${(a.aiAbsorb*100|0)}%</span></div>${bar(a.aiAbsorb,"#36e0d0")}`
+   +`<div class="kv"><span>Fatigue</span><span>${(a.fatigue*100|0)}%</span></div>${bar(a.fatigue,"#c084fc")}`;
+});
+
+// ============================================================================
+//  HUD
+// ============================================================================
+let KPI={prod:2,readiness:85,coverage:100,automation:12,overloaded:0,deployed:0,active:POP};
+const col=(v,g,w)=>v>=g?"#36d399":v>=w?"#fbbd23":"#f87272";
+function chip(l,v,s,c){return `<div class="kpi"><div class="l">${l}</div><div class="v" style="color:${c}">${v}</div><div class="s">${s}</div></div>`;}
+function updateHUD(){
+  document.getElementById("wk").textContent=week;
+  document.getElementById("kpibar").innerHTML=
+     chip("PRODUCTIVITY", KPI.prod.toFixed(1)+"x", "target 10×", col(KPI.prod,7,3))
+    +chip("MISSION READINESS", KPI.readiness.toFixed(0)+"%", KPI.deployed+" deployed", col(KPI.readiness,75,50))
+    +chip("SURGE COVERAGE", KPI.coverage.toFixed(0)+"%", KPI.active+" active", col(KPI.coverage,90,60))
+    +chip("MANUAL→AI", KPI.automation.toFixed(0)+"%", "work automated", "#36e0d0")
+    +chip("OVERLOADED", KPI.overloaded.toString(), "agents over capacity", col(100-KPI.overloaded*2,80,50));
+}
+
+// ============================================================================
+//  Controls + loop
+// ============================================================================
+let playing=true, speed=1;
+const speeds=[1,2,4];
+document.getElementById("playBtn").addEventListener("click",e=>{
+  playing=!playing; e.target.textContent=playing?"⏸ Pause":"▶ Play"; e.target.classList.toggle("on",playing);
+});
+document.getElementById("speedBtn").addEventListener("click",e=>{
+  speed=speeds[(speeds.indexOf(speed)+1)%speeds.length]; e.target.textContent="▶ "+speed+"×";
+});
+document.querySelectorAll('#controls [data-scn]').forEach(b=>
+  b.addEventListener("click",()=>setScenario(+b.dataset.scn,true)));
+addEventListener("keydown",e=>{ if(e.code>="Digit1"&&e.code<="Digit5") setScenario(+e.code.slice(5)-1,true); });
+addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+
+const TICK=0.45; let acc=0, last=performance.now();
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(playing){ acc+=dt*speed; while(acc>=TICK){ stepSim(); acc-=TICK; } }
+  updateVisuals(dt);
+  renderer.render(scene,camera);
+  requestAnimationFrame(loop);
+}
+
+// ---- best-effort cross-window scenario sync --------------------------------
+let bc=null; const WIN=Math.random().toString(36).slice(2); const peers=new Map();
+function bcast(){ try{ bc&&bc.postMessage({t:"scn",i:scnIndex,from:WIN}); }catch(e){} }
+(function sync(){
+  try{
+    bc=new BroadcastChannel("dto-twin-dla26bz03");
+    document.getElementById("syncMode").textContent="synced";
+    bc.onmessage=ev=>{const m=ev.data||{};if(m.from===WIN)return;
+      if(m.t==="scn"){setScenario(m.i,false);}
+      else if(m.t==="ping"){peers.set(m.from,Date.now());try{bc.postMessage({t:"pong",from:WIN});}catch(e){}}
+      else if(m.t==="pong"){peers.set(m.from,Date.now());}};
+    setInterval(()=>{try{bc.postMessage({t:"ping",from:WIN});}catch(e){}
+      const cut=Date.now()-3500; for(const[id,ts]of peers) if(ts<cut)peers.delete(id);
+      document.getElementById("winCount").textContent=String(peers.size+1);},1000);
+  }catch(e){document.getElementById("syncMode").textContent="standalone";}
+})();
+
+// boot
+setScenario(0,false);
+updateHUD();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
