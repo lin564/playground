@@ -137,8 +137,8 @@ for(let d=0; d<DIRS.length; d++){
 
 // ---- scenario state (targets ramp -> current for gradual roll-out) ----------
 let scnIndex=0;
-const cur={surge:0,disruption:0.05,geo:0.10,ai:0.20};
-const tgt={...SCENARIOS[0]};
+const cur={surge:0,disruption:0.05,geo:0.10,ai:0.20,process:0,reskill:0};
+const tgt={...SCENARIOS[0],process:0,reskill:0};
 let week=0, syntheticRecords=0;
 
 function setScenario(i, broadcast){
@@ -154,7 +154,7 @@ function setScenario(i, broadcast){
 function stepSim(){
   week++;
   // ramp current parameters toward the injected scenario
-  for(const k of ["surge","disruption","geo","ai"]) cur[k]+=(tgt[k]-cur[k])*0.15;
+  for(const k of ["surge","disruption","geo","ai","process","reskill"]) cur[k]+=(tgt[k]-cur[k])*0.15;
 
   // deployment: number of LINE agents pulled out (reserves stay as backfill)
   const desired=Math.round(cur.surge*POP);
@@ -182,9 +182,11 @@ function stepSim(){
     if(a.deployed){ deployed++; a.fatigue=Math.max(0,a.fatigue-0.05); continue; }
     const redistribute = dirSize[a.dir]/Math.max(1,dirActive[a.dir]); // fewer active -> each carries more
     a.aiAbsorb = a.automatable*cur.ai;                                // share of this agent's work AI absorbs
-    let load = 0.55 * demandFactor * (1 - a.aiAbsorb) * redistribute;
+    const baseLoad = 0.55 * (1 - 0.45*cur.process);                  // process streamlining removes low-value work
+    const skillEff = Math.min(1, a.skill*(1 + 0.30*cur.reskill));    // reskilling raises effective skill
+    let load = baseLoad * demandFactor * (1 - a.aiAbsorb) * redistribute;
     load *= (1 + a.fatigue*0.30);                                     // fatigue makes work cost more
-    load /= Math.max(0.55, a.skill) / 0.70;                           // higher skill -> lower relative load
+    load /= Math.max(0.55, skillEff) / 0.70;                          // higher skill -> lower relative load
     a.load = load;
     // fatigue dynamics
     if(load>0.90) a.fatigue=Math.min(1,a.fatigue+0.04);
@@ -433,7 +435,7 @@ if(new URLSearchParams(location.search).has("embed")){
 // allow a parent page (the dashboard) to drive the scenario directly
 addEventListener("message",e=>{ const m=e.data||{};
   if(m && m.t==="scn") setScenario(m.i,false);
-  else if(m && m.t==="levers"){ for(const k of ["surge","disruption","geo","ai"]) if(k in m) tgt[k]=m[k]; }
+  else if(m && m.t==="levers"){ for(const k of ["surge","disruption","geo","ai","process","reskill"]) if(k in m) tgt[k]=m[k]; }
 });
 
 // boot
