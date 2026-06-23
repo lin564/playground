@@ -45,6 +45,8 @@
   #help{right:14px;bottom:14px;padding:8px 12px;font-size:11px;color:#8aa0c6;}
   #badge{right:14px;bottom:54px;padding:5px 9px;font-size:10px;color:#9fb3d6;border-radius:999px;}
   #badge b{color:#36d399;}
+  /* embedded-as-hero mode: hide all chrome, show only the 3D canvas */
+  .embed .panel,.embed #tooltip{display:none!important;}
 </style>
 </head>
 <body>
@@ -422,6 +424,14 @@ function bcast(){ try{ bc&&bc.postMessage({t:"scn",i:scnIndex,from:WIN}); }catch
       document.getElementById("winCount").textContent=String(peers.size+1);},1000);
   }catch(e){document.getElementById("syncMode").textContent="standalone";}
 })();
+
+// embed mode (used when shown as the hero inside the executive dashboard)
+if(new URLSearchParams(location.search).has("embed")){
+  document.body.classList.add("embed");
+  phi=0.78; radius=92; placeCam();
+}
+// allow a parent page (the dashboard) to drive the scenario directly
+addEventListener("message",e=>{ const m=e.data||{}; if(m && m.t==="scn") setScenario(m.i,false); });
 
 // boot
 setScenario(0,false);
