@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DTO 3D World — DLA26BZ03-NV011 (Local)</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0a1426;
+    font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #fff; }
+  #c { display: block; }
+  #crosshair { position: fixed; left: 50%; top: 50%; width: 8px; height: 8px;
+    margin: -4px 0 0 -4px; border-radius: 50%; background: rgba(95,168,255,.9);
+    box-shadow: 0 0 0 2px rgba(0,0,0,.4); pointer-events: none; display: none; }
+  #hud { position: fixed; left: 14px; bottom: 12px; color: #9fb3d6; font-size: 12px;
+    text-shadow: 0 1px 2px #000; pointer-events: none; }
+  #hud b { color: #5fa8ff; }
+  #overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(6,12,24,.78); backdrop-filter: blur(2px); cursor: pointer; z-index: 5; }
+  #overlay .box { max-width: 520px; text-align: center; padding: 28px 30px;
+    background: #14223b; border: 1px solid #2a3c5e; border-radius: 16px; }
+  #overlay h1 { margin: 0 0 6px; font-size: 22px; }
+  #overlay .sub { color: #5fa8ff; font-size: 13px; margin-bottom: 16px; }
+  #overlay p { color: #cdd9ef; margin: 10px 0; }
+  #overlay .keys { color: #9fb3d6; font-size: 13px; margin-top: 16px; }
+  #overlay kbd { background: #0e1a30; border: 1px solid #2a3c5e; border-radius: 5px;
+    padding: 1px 7px; margin: 0 1px; font-family: ui-monospace, monospace; }
+  #overlay .go { margin-top: 18px; color: #36d399; font-weight: 700; }
+  #badge { position: fixed; right: 12px; top: 10px; font-size: 11px; color: #9fb3d6;
+    background: #14223b; border: 1px solid #21304d; padding: 5px 9px; border-radius: 999px; pointer-events: none; }
+  #badge b { color: #36d399; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="crosshair"></div>
+<div id="badge">windows: <b id="winCount">1</b> · <span id="syncMode">standalone</span></div>
+<div id="hud">
+  <div>Scenario <b id="hScn">1/5</b>: <span id="hName">—</span></div>
+  <div><b>WASD</b> move · <b>mouse</b> look · <b>click panel</b> next scenario · <b>1–5</b> jump · <b>Esc</b> release</div>
+</div>
+<div id="overlay">
+  <div class="box">
+    <h1>Digital Twin of the Organization</h1>
+    <div class="sub">DLA26BZ03-NV011 · UltiSim Inc. · Local 3D build (no backend)</div>
+    <p>Walk the operations floor and inspect the live workforce twin. Approach a panel and click to run the next scenario.</p>
+    <div class="keys">
+      <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move &nbsp; <kbd>mouse</kbd> look &nbsp;
+      <kbd>1</kbd>–<kbd>5</kbd> scenarios &nbsp; <kbd>N</kbd>/<kbd>P</kbd> next/prev &nbsp; <kbd>Esc</kbd> release cursor
+    </div>
+    <div class="go">▶ Click to enter</div>
+  </div>
+</div>
+
+<script src="./vendor/three.min.js"></script>
+<script>
+"use strict";
+// ============================================================================
+// DTO deterministic engine (identical model to behaviors/default/dtoEngine.js)
+// ============================================================================
+const DIRECTORATES = ["J1 Personnel", "J3 Operations", "J6 Information", "J7 Readiness"];
+const SCENARIOS = [
+  { name: "Baseline Steady-State",    surge: 0.00, disruption: 0.05, geo: 0.10, aiAdoption: 0.20,
+    desc: "Normal operations, light AI adoption." },
+  { name: "Surge Deployment",         surge: 0.35, disruption: 0.15, geo: 0.30, aiAdoption: 0.25,
+    desc: "Sudden deployment — backfill without mission degradation?" },
+  { name: "Supply-Chain Disruption",  surge: 0.10, disruption: 0.60, geo: 0.40, aiAdoption: 0.30,
+    desc: "Major logistics shock — react rapidly." },
+  { name: "Geopolitical Shift (GPC)", surge: 0.25, disruption: 0.45, geo: 0.75, aiAdoption: 0.35,
+    desc: "Great-power competition — counter near-peer scale." },
+  { name: "AI-Augmented Workforce",   surge: 0.10, disruption: 0.20, geo: 0.30, aiAdoption: 0.85,
+    desc: "Human-machine teaming — pathway to 10x." },
+];
+const Engine = {
+  seed: 0x2545f491, scenarioIndex: 0, tick: 0, syntheticRecords: 0, agents: [], population: 240,
+  rand() { this.seed = (Math.imul(this.seed, 1664525) + 1013904223) >>> 0; return this.seed / 4294967296; },
+  buildWorkforce() {
+    this.seed = 0x2545f491; this.agents = [];
+    for (let i = 0; i < this.population; i++) {
+      this.agents.push({
+        dir: DIRECTORATES[i % DIRECTORATES.length],
+        skill: 0.45 + this.rand() * 0.5,
+        manualLoad: 4 + this.rand() * 6,
+        automatable: 0.3 + this.rand() * 0.6,
+        deployable: this.rand() > 0.25,
+      });
+    }
+  },
+  setScenario(i) { if (i >= 0 && i < SCENARIOS.length) this.scenarioIndex = i; },
+  cycle(d) { const n = SCENARIOS.length; this.scenarioIndex = (this.scenarioIndex + d + n) % n; },
+  step() { this.tick += 1; this.syntheticRecords += 2500 + Math.floor(this.rand() * 500); },
+  computeState() {
+    const s = SCENARIOS[this.scenarioIndex];
+    let totalManual = 0, residualManual = 0, deployableCount = 0, skillSum = 0;
+    const byDir = {}; DIRECTORATES.forEach(d => byDir[d] = { skill: 0, n: 0 });
+    for (const a of this.agents) {
+      totalManual += a.manualLoad;
+      residualManual += a.manualLoad - a.manualLoad * a.automatable * s.aiAdoption;
+      skillSum += a.skill;
+      if (a.deployable) deployableCount += 1;
+      byDir[a.dir].skill += a.skill; byDir[a.dir].n += 1;
+    }
+    const automatedHours = totalManual - residualManual;
+    const laborLever = totalManual / Math.max(residualManual, 1);
+    const teamingLever = 1 + 9 * Math.pow(s.aiAdoption, 1.4);
+    let productivity = laborLever * teamingLever;
+    productivity *= (1 - 0.25 * s.disruption) * (1 - 0.20 * s.surge);
+    productivity = Math.max(1, productivity);
+    const deployedGap = Math.round(this.population * s.surge);
+    const surgeCoverage = deployedGap === 0 ? 100 : Math.min(100, (deployableCount / deployedGap) * 100);
+    const skillBase = (skillSum / this.population) * 100;
+    const noise = (this.rand() - 0.5) * 2;
+    let readiness = 0.45 * skillBase + 0.35 * surgeCoverage
+      + 0.20 * (100 - (s.disruption * 60 + s.geo * 40)) + noise;
+    readiness = Math.max(0, Math.min(100, readiness));
+    const dirReadiness = DIRECTORATES.map(d => {
+      const avg = byDir[d].n ? byDir[d].skill / byDir[d].n : 0;
+      return { dir: d, readiness: Math.max(0, Math.min(100, avg * 100 * (1 - 0.18 * s.disruption - 0.12 * s.geo))) };
+    });
+    return { scenarioIndex: this.scenarioIndex, scenario: s, tick: this.tick, population: this.population,
+      syntheticRecords: this.syntheticRecords, productivity, readiness, surgeCoverage,
+      manualHoursPerDay: Math.round(residualManual), automatedHoursPerDay: Math.round(automatedHours), dirReadiness };
+  },
+};
+
+// ============================================================================
+// Canvas drawing helpers (panels are CanvasTextures)
+// ============================================================================
+function rr(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const col = (v, g, w) => v >= g ? "#36d399" : v >= w ? "#fbbd23" : "#f87272";
+
+function drawMain(ctx, W, H, st) {
+  ctx.fillStyle = "#0a1426"; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.font = "bold 34px sans-serif";
+  ctx.fillText("Digital Twin of the Organization", 36, 50);
+  ctx.fillStyle = "#5fa8ff"; ctx.font = "20px sans-serif";
+  ctx.fillText("DLA26BZ03-NV011 · UltiSim Inc.", 36, 80);
+  // scenario banner
+  ctx.fillStyle = "#13294b"; rr(ctx, 36, 100, W - 72, 56, 12); ctx.fill();
+  ctx.fillStyle = "#9fb3d6"; ctx.font = "16px sans-serif"; ctx.fillText("ACTIVE SCENARIO", 56, 122);
+  ctx.fillStyle = "#fff"; ctx.font = "bold 24px sans-serif"; ctx.fillText(st.scenario.name, 56, 148);
+  ctx.fillStyle = "#5fa8ff"; ctx.textAlign = "right"; ctx.font = "15px sans-serif";
+  ctx.fillText("scenario " + (st.scenarioIndex + 1) + "/5", W - 56, 148); ctx.textAlign = "left";
+  // KPI grid 2x2
+  const gx = 36, gy = 176, gw = (W - 72 - 24) / 2, gh = 150, gap = 24;
+  const auto = st.automatedHoursPerDay / Math.max(1, st.automatedHoursPerDay + st.manualHoursPerDay);
+  kpi(ctx, gx, gy, gw, gh, "PRODUCTIVITY MULTIPLIER", st.productivity.toFixed(1) + "x",
+    "target 10x · overmatch", st.productivity / 10, col(st.productivity, 7, 3));
+  kpi(ctx, gx + gw + gap, gy, gw, gh, "MISSION READINESS", st.readiness.toFixed(0) + "%",
+    "skill · backfill · disruption", st.readiness / 100, col(st.readiness, 75, 50));
+  kpi(ctx, gx, gy + gh + gap, gw, gh, "SURGE BACKFILL", st.surgeCoverage.toFixed(0) + "%",
+    "deployable vs. deployed gap", st.surgeCoverage / 100, col(st.surgeCoverage, 90, 60));
+  kpi(ctx, gx + gw + gap, gy + gh + gap, gw, gh, "MANUAL WORK AUTOMATED", (auto * 100).toFixed(0) + "%",
+    st.automatedHoursPerDay + " hrs/day to AI", auto, "#5fa8ff");
+  // footer
+  ctx.fillStyle = "#7f93b5"; ctx.font = "16px sans-serif";
+  ctx.fillText(st.population + " agents · " + st.syntheticRecords.toLocaleString() +
+    " synthetic records (PII-free) · refresh #" + st.tick, 36, H - 22);
+  ctx.textAlign = "right"; ctx.fillStyle = "#5fa8ff";
+  ctx.fillText("▶ click to run next scenario", W - 36, H - 22); ctx.textAlign = "left";
+}
+function kpi(ctx, x, y, w, h, label, val, sub, pct, c) {
+  ctx.fillStyle = "#14223b"; rr(ctx, x, y, w, h, 14); ctx.fill();
+  ctx.fillStyle = "#7f93b5"; ctx.font = "18px sans-serif"; ctx.fillText(label, x + 20, y + 34);
+  ctx.fillStyle = "#fff"; ctx.font = "bold 50px sans-serif"; ctx.fillText(val, x + 20, y + 92);
+  ctx.fillStyle = "#9fb3d6"; ctx.font = "16px sans-serif"; ctx.fillText(sub, x + 20, y + 120);
+  const bx = x + 20, by = y + h - 26, bw = w - 40;
+  ctx.fillStyle = "#0a1426"; rr(ctx, bx, by, bw, 12, 6); ctx.fill();
+  ctx.fillStyle = c; rr(ctx, bx, by, Math.max(12, bw * clamp01(pct)), 12, 6); ctx.fill();
+}
+function drawList(ctx, W, H, title, rows) {
+  ctx.fillStyle = "#0e1a30"; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "#9fb3d6"; ctx.textAlign = "left"; ctx.font = "bold 22px sans-serif";
+  ctx.fillText(title, 28, 44);
+  let y = 92;
+  for (const r of rows) {
+    ctx.fillStyle = "#7f93b5"; ctx.font = "19px sans-serif"; ctx.fillText(r.nm, 28, y);
+    const bx = 28, by = y + 12, bw = W - 56;
+    ctx.fillStyle = "#0a1426"; rr(ctx, bx, by, bw, 14, 7); ctx.fill();
+    ctx.fillStyle = r.c; rr(ctx, bx, by, Math.max(14, bw * clamp01(r.v)), 14, 7); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.textAlign = "right"; ctx.font = "17px sans-serif";
+    ctx.fillText(r.lab, W - 28, y); ctx.textAlign = "left";
+    y += 64;
+  }
+}
+
+// ============================================================================
+// Three.js scene
+// ============================================================================
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("c"), antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+if ("outputEncoding" in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a1426);
+scene.fog = new THREE.Fog(0x0a1426, 22, 75);
+
+const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, 0.1, 250);
+camera.rotation.order = "YXZ";
+
+scene.add(new THREE.HemisphereLight(0x9fc0ff, 0x16213a, 0.9));
+const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+dir.position.set(8, 18, 6); scene.add(dir);
+
+// floor
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(120, 120),
+  new THREE.MeshStandardMaterial({ color: 0x101d33, roughness: 0.95, metalness: 0.0 })
+);
+floor.rotation.x = -Math.PI / 2; scene.add(floor);
+const grid = new THREE.GridHelper(120, 60, 0x2a4a6e, 0x1b2b48);
+scene.add(grid);
+
+// decorative pillars for spatial reference
+const pillarGeo = new THREE.BoxGeometry(1, 6, 1);
+const pillarMat = new THREE.MeshStandardMaterial({ color: 0x16243f, roughness: 0.8 });
+for (const x of [-16, 16]) for (const z of [-14, -2, 10]) {
+  const p = new THREE.Mesh(pillarGeo, pillarMat); p.position.set(x, 3, z); scene.add(p);
+}
+
+// ---- panels ----
+const interactives = [];
+function makePanel(cw, ch, pw, ph, pos, rotY, drawFn) {
+  const canvas = document.createElement("canvas"); canvas.width = cw; canvas.height = ch;
+  const ctx = canvas.getContext("2d");
+  const tex = new THREE.CanvasTexture(canvas);
+  if ("encoding" in tex) tex.encoding = THREE.sRGBEncoding;
+  // frame
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.25, ph + 0.25, 0.12),
+    new THREE.MeshStandardMaterial({ color: 0x223354, roughness: 0.6 }));
+  frame.position.copy(pos); frame.rotation.y = rotY; scene.add(frame);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph),
+    new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  screen.position.copy(pos); screen.rotation.y = rotY;
+  screen.position.x += Math.sin(rotY) * 0.07; screen.position.z += Math.cos(rotY) * 0.07;
+  scene.add(screen);
+  interactives.push(screen);
+  return { canvas, ctx, tex, drawFn, cw, ch };
+}
+
+const mainPanel = makePanel(1024, 576, 9, 5.06, new THREE.Vector3(0, 3.2, -13), 0, drawMain);
+const leftPanel = makePanel(512, 600, 4.2, 4.92, new THREE.Vector3(-9, 3.0, -9), Math.PI / 5,
+  (ctx, W, H, st) => drawList(ctx, W, H, "READINESS BY DIRECTORATE",
+    st.dirReadiness.map(d => ({ nm: d.dir, v: d.readiness / 100, lab: d.readiness.toFixed(0) + "%", c: col(d.readiness, 75, 50) }))));
+const rightPanel = makePanel(512, 600, 4.2, 4.92, new THREE.Vector3(9, 3.0, -9), -Math.PI / 5,
+  (ctx, W, H, st) => {
+    const s = st.scenario;
+    drawList(ctx, W, H, "SCENARIO DRIVERS", [
+      { nm: "Surge / deployment", v: s.surge, lab: (s.surge * 100).toFixed(0) + "%", c: "#5fa8ff" },
+      { nm: "Supply-chain stress", v: s.disruption, lab: (s.disruption * 100).toFixed(0) + "%", c: "#5fa8ff" },
+      { nm: "Geopolitical pressure", v: s.geo, lab: (s.geo * 100).toFixed(0) + "%", c: "#5fa8ff" },
+      { nm: "AI adoption", v: s.aiAdoption, lab: (s.aiAdoption * 100).toFixed(0) + "%", c: "#5fa8ff" },
+    ]);
+  });
+const panels = [mainPanel, leftPanel, rightPanel];
+
+function redraw() {
+  const st = Engine.computeState();
+  for (const p of panels) { p.drawFn(p.ctx, p.cw, p.ch, st); p.tex.needsUpdate = true; }
+  document.getElementById("hScn").textContent = (st.scenarioIndex + 1) + "/5";
+  document.getElementById("hName").textContent = st.scenario.name;
+}
+
+// ============================================================================
+// Controls — custom pointer-lock + WASD (no external modules needed)
+// ============================================================================
+const player = new THREE.Vector3(0, 1.7, 10);
+let yaw = 0, pitch = 0, locked = false;
+const keys = {};
+const overlay = document.getElementById("overlay");
+const crosshair = document.getElementById("crosshair");
+
+addEventListener("keydown", (e) => {
+  keys[e.code] = true;
+  if (e.code >= "Digit1" && e.code <= "Digit5") { Engine.setScenario(+e.code.slice(5) - 1); onScenarioChanged(true); }
+  if (e.code === "KeyN") { Engine.cycle(+1); onScenarioChanged(true); }
+  if (e.code === "KeyP") { Engine.cycle(-1); onScenarioChanged(true); }
+});
+addEventListener("keyup", (e) => { keys[e.code] = false; });
+
+renderer.domElement.addEventListener("click", () => {
+  if (!locked) { renderer.domElement.requestPointerLock(); return; }
+  raycaster.setFromCamera({ x: 0, y: 0 }, camera);
+  if (raycaster.intersectObjects(interactives, false).length) { Engine.cycle(+1); onScenarioChanged(true); }
+});
+document.addEventListener("pointerlockchange", () => {
+  locked = document.pointerLockElement === renderer.domElement;
+  overlay.style.display = locked ? "none" : "flex";
+  crosshair.style.display = locked ? "block" : "none";
+});
+overlay.addEventListener("click", () => renderer.domElement.requestPointerLock());
+addEventListener("mousemove", (e) => {
+  if (!locked) return;
+  yaw -= e.movementX * 0.0022;
+  pitch -= e.movementY * 0.0022;
+  pitch = Math.max(-1.2, Math.min(1.2, pitch));
+});
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+const raycaster = new THREE.Raycaster();
+const up = new THREE.Vector3(0, 1, 0);
+const fwd = new THREE.Vector3(), right = new THREE.Vector3();
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  camera.rotation.set(pitch, yaw, 0);
+  if (locked) {
+    camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
+    right.crossVectors(fwd, up).normalize();
+    const speed = (keys["ShiftLeft"] ? 11 : 6) * dt;
+    if (keys["KeyW"] || keys["ArrowUp"]) player.addScaledVector(fwd, speed);
+    if (keys["KeyS"] || keys["ArrowDown"]) player.addScaledVector(fwd, -speed);
+    if (keys["KeyD"] || keys["ArrowRight"]) player.addScaledVector(right, speed);
+    if (keys["KeyA"] || keys["ArrowLeft"]) player.addScaledVector(right, -speed);
+    player.x = Math.max(-30, Math.min(30, player.x));
+    player.z = Math.max(-11.5, Math.min(34, player.z)); // don't walk through the main wall
+    player.y = 1.7;
+  }
+  camera.position.copy(player);
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+
+// ============================================================================
+// Local "reflector" — best-effort cross-window scenario sync (BroadcastChannel)
+// ============================================================================
+let bc = null; const WIN = Math.random().toString(36).slice(2); const peers = new Map();
+function broadcast() { try { bc && bc.postMessage({ t: "scn", i: Engine.scenarioIndex, from: WIN }); } catch (e) {} }
+function onScenarioChanged(doBroadcast) { redraw(); if (doBroadcast) broadcast(); }
+function setupSync() {
+  try {
+    bc = new BroadcastChannel("dto-dla26bz03-3d");
+    document.getElementById("syncMode").textContent = "synced";
+    bc.onmessage = (ev) => {
+      const m = ev.data || {}; if (m.from === WIN) return;
+      if (m.t === "scn") { Engine.setScenario(m.i); redraw(); }
+      else if (m.t === "ping") { peers.set(m.from, Date.now()); try { bc.postMessage({ t: "pong", from: WIN }); } catch (e) {} }
+      else if (m.t === "pong") { peers.set(m.from, Date.now()); }
+    };
+    setInterval(() => {
+      try { bc.postMessage({ t: "ping", from: WIN }); } catch (e) {}
+      const cut = Date.now() - 3500;
+      for (const [id, ts] of peers) if (ts < cut) peers.delete(id);
+      document.getElementById("winCount").textContent = String(peers.size + 1);
+    }, 1000);
+  } catch (e) { document.getElementById("syncMode").textContent = "standalone"; }
+}
+
+// ============================================================================
+// Boot
+// ============================================================================
+Engine.buildWorkforce();
+setupSync();
+redraw();
+requestAnimationFrame(loop);
+setInterval(() => { Engine.step(); redraw(); }, 1500); // continuous-learning refresh
+</script>
+</body>
+</html>
