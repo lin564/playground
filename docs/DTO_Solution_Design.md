@@ -7,9 +7,12 @@
 
 > This document is the engineering design that backs the UltiSim Technical Volume.
 > It traces every RFP requirement to an architectural element and to the working
-> proof-of-concept in this repository (`behaviors/default/dtoEngine.js`, wired into
-> `worlds/default.js`). The POC demonstrates the **interface layer** of the DTO on
-> the DoD Virtual World Framework (here, the open-source Croquet Microverse runtime).
+> proof-of-concept in this repository. Two POC tracks exist:
+> 1. **Microverse track** (`behaviors/default/dtoEngine.js` + `worlds/default.js`) — the original
+>    interface-layer demo on the DoD Virtual World Framework (Croquet Microverse).
+> 2. **Standalone offline track** (`standalone/`) — the current, recommended POC. Because the
+>    hosted Croquet network was retired (July 2025), the interface layer was re-implemented on a
+>    vendored **Three.js** build that runs locally with no backend or API key. See §10.
 
 ---
 
@@ -181,7 +184,92 @@ the identical twin and the same scenario change in real time. Key files:
 
 ---
 
-## 10. Phase II / Phase III Outlook
+## 10. Standalone offline POC (`standalone/`)
+
+The recommended demonstration. No server, no API key, no internet — vendored Three.js only.
+
+| File | What it is |
+|------|------------|
+| `standalone/dto-dashboard.html` | **Headline build.** A HealthSimAI-style *Workforce Decision Simulator* with the live 3D twin embedded as the hero, a data-ingestion panel, a decision console, and a synthetic-data generator. |
+| `standalone/dto-twin.html` | The agent-based 3D world (240 agents across J1/J3/J6/J7). Runs standalone or embedded (`?embed=1`) and accepts `postMessage` lever/scenario commands. |
+| `standalone/dto.html` | Lightweight 2D dashboard (no 3D dependency). |
+| `standalone/vendor/three.min.js` | Vendored Three.js r149 (UMD) so the world runs from `file://`. |
+
+**Run:** open `dto-dashboard.html` (double-click), or `python3 -m http.server` in `standalone/`
+for guaranteed cross-frame sync, then open `http://localhost:8000/dto-dashboard.html`.
+
+### 10.1 Positioning the tool — a workforce decision "flight simulator"
+
+The interface is framed around the core value proposition: **test an organizational decision
+before committing to it.** Simulation-mode framing (safe sandbox), a 3-step loop
+(*set up a decision → preview the impact → run it on the twin*), an explicit **LIVE vs.
+PROJECTED** split, and a plain-English **verdict** (Recommended / Proceed with caution /
+High risk) make the function legible to non-technical leaders.
+
+### 10.2 Data ingestion (Tier 1)
+
+A **Data Ingestion** panel shows four operational feeds — Personnel/HR, Logistics, Procurement,
+Communications — streaming records into the twin with per-feed throughput, a validation rate, and
+the **SMARTR** pipeline strip (Scrub · Model · Align · Represent · Transform · Render). In the POC
+these are **simulated connectors**; Phase II replaces them with governed live connectors to DLA
+systems of record.
+
+### 10.3 Synthetic data generation (real method)
+
+The synthetic-data capability is implemented, not mocked:
+
+1. A sensitive **"real" HR table** is generated with PII fields (name, SSN, DOB) plus correlated
+   numeric attributes (tenure, skill, performance) and a categorical directorate.
+2. A **PII-free synthetic dataset** is produced by estimating the mean vector and covariance of
+   the numeric attributes and sampling via **Cholesky decomposition** (a Gaussian-copula-style
+   method), with categorical fields drawn from the empirical proportions. **No PII fields are
+   emitted.**
+3. A **before/after panel** shows that means, standard deviations, and key correlations
+   (skill↔performance, tenure↔skill) are preserved, alongside a skill-distribution histogram and a
+   privacy attestation (PII fields retained = 0; no synthetic record copies a real person).
+
+This lets workforce analysis proceed on statistically faithful data without exposing individuals —
+directly supporting the CMMC L2 / PII-protection posture.
+
+### 10.4 Structural pathways to 10× productivity
+
+Productivity is modeled as a **decomposition of four structural levers**, not a single AI dial:
+
+```
+work_capacity = f_automation × f_process × f_teaming × f_reskill × overload_drag
+```
+
+- **Automation (AI)** — `1 / (1 − AI-absorbed share)`
+- **Process streamlining** — eliminating low-value manual work
+- **Human-machine teaming & reorg** — coordination/throughput gains
+- **Reskilling** — higher output per person
+
+The **Pathway-to-10×** view shows each lever's multiplier and the combined result against the 10×
+target. A key, deliberately honest result: **AI alone reaches ≈2×; ≈10× requires all four levers
+pulled together** — i.e., 10× is a *structural transformation*, not an automation purchase.
+
+---
+
+## 11. Methodology & honest limitations
+
+To keep the proposal credible, the POC distinguishes what is *demonstrated* from what is *planned*:
+
+| Area | Status in POC | Production (Phase II+) |
+|------|---------------|------------------------|
+| Live data ingestion | **Simulated feeds** (clearly labeled) | Governed connectors to DLA systems of record |
+| Synthetic data | **Real method** (covariance-preserving, PII-stripped), demonstration scale | + categorical conditional structure, differential-privacy guarantees, utility/disclosure metrics |
+| 10× productivity model | **Illustrative** lever decomposition | Calibrated to real workload baselines; SME-validated |
+| Agent model | Deterministic ABM with fatigue feedback | ML-updated agents from historical performance |
+| Validation | Face-valid, internally consistent | Historical backtesting + statistical cross-validation + SME review |
+| Multi-user | Local cross-window sync (`BroadcastChannel`/`postMessage`) | Networked collaboration via a sync backend |
+
+All figures are illustrative model outputs for a TRL 3–6 feasibility demonstration, **not validated
+against live DLA data**. Calibration, validation, and governed data integration are explicit
+Phase I/II deliverables.
+
+---
+
+## 12. Phase II / Phase III Outlook
 
 - **Phase II:** milestone-driven agile sprints to a validated MVP — replace the synthetic feed
   with governed live connectors, harden the SMARTR pipeline, add NLP analytics over real
