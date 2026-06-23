@@ -2,7 +2,7 @@ name: Deploy DTO POC to GitHub Pages
 
 on:
   push:
-    branches: ["claude/exciting-ritchie-8mj71x"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
