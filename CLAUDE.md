@@ -4,9 +4,13 @@
 
 This is a **Croquet Microverse** project - a collaborative 3D virtual world built on the Croquet platform.
 
+> **Self-hosted:** The hosted Croquet network was deprecated and Multisynq is shut
+> down. This world runs fully standalone against a self-hosted reflector with no
+> dependency on any Croquet/Multisynq server. See `docs/STANDALONE.md`.
+
 ## Tech Stack
 
-- **Framework**: Croquet Microverse (`@croquet/microverse-library` v0.3.8)
+- **Framework**: Croquet Microverse (`@croquet/microverse-library` v0.8.4)
 - **Language**: JavaScript (ES Modules)
 - **3D Engine**: Three.js (via Microverse)
 - **Physics**: Rapier3D

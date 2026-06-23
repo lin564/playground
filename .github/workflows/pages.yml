@@ -1,4 +1,4 @@
-name: Deploy DTO POC to GitHub Pages
+name: Deploy world to GitHub Pages
 
 on:
   push:

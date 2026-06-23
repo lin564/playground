@@ -21,12 +21,14 @@ export function init(Constants) {
 
     Constants.UserBehaviorDirectory = "behaviors/default";
     Constants.UserBehaviorModules = [
-        "csmLights.js",
-        "dtoEngine.js"
+        "csmLights.js"
     ];
 
     Constants.DefaultCards = [
         {
+            // Walkable ground. This is a placeholder plane — drag-and-drop your
+            // own .glb environment into the running world (tag it "walk" to walk
+            // on it) or replace this card with a `dataLocation`/`fileName` model.
             card: {
                 name:"world model",
                 layers: ["walk"],
@@ -41,6 +43,9 @@ export function init(Constants) {
             }
         },
         {
+            // Scene lighting + environment map (see behaviors/default/csmLights.js).
+            // The HDR below is the Microverse default; swap dataLocation/fileName
+            // for a local asset under ./assets to be fully self-contained.
             card: {
                 name: "light",
                 layers: ["light"],
@@ -50,40 +55,6 @@ export function init(Constants) {
                 fileName: "/abandoned_parking_4k.jpg",
                 dataType: "jpg",
             }
-        },
-        {
-            card: {
-                dataLocation: "35lwX9HzAE37OmfHIL4Ev70VZ3mgflGQ3lijemXAu6iUXUFBRUYPGhpTXFlQRhtARhtWR1pEQFBBG1xaGkAaW1x6R35zAwAHXXtyYFtmB0VbQX4DcWRnB3xEBxpWWlgbQFlBXEZcWBtZXFtRVBtXUEdbVEdRG1hcVkdaQ1BHRlAaB0VmRxh6fF0FbXJeTXhkfFd0BX9Xe3JccHsGegRhU0AFfWoYYGZbZANqeBpRVEFUGgNsBVxCU1hZT3BbAQVWYXhdB0BXV1RTBXcEDQZCXFhHZQ1QfU1fb15nWGQ",
-                dataScale: [
-                        0.7688558240644012,
-                        0.7688558240644012,
-                        0.7688558240644012
-                    ],
-                 fileName: "/sci-fi_door_game.glb",
-                 layers: [
-                        "pointer"
-                 ],
-                modelType: "glb",
-                name: "/sci-fi_door_game.glb",
-
-            }
-        },
-        {
-            // Digital Twin of the Organization — Phase I scenario-planning
-            // dashboard (DLA26BZ03-NV011). See behaviors/default/dtoEngine.js
-            // and docs/DTO_Solution_Design.md.
-            card: {
-                name: "DTO Dashboard",
-                type: "object",
-                behaviorModules: ["DTO"],
-                layers: ["pointer"],
-                translation: [0, 1.6, -6],
-                rotation: [0, 0, 0],
-                width: 4.2,
-                height: 2.6,
-                shadow: true,
-            }
         }
-
     ];
 }

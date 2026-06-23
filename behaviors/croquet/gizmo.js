@@ -1,5 +1,21 @@
-class GizmoActor {
+// the following import statement is solely for the type checking and
+// autocompletion features in IDE.  A Behavior cannot inherit from
+// another behavior or a base class but can use the methods and
+// properties of the card to which it is installed.
+// The prototype classes ActorBehavior and PawnBehavior provide
+// the features defined at the card object.
+
+import {ActorBehavior, PawnBehavior} from "../PrototypeBehavior";
+
+class GizmoActor extends ActorBehavior {
     setup() {
+        this.target = this._cardData.target;
+        let targetParent = this._cardData.targetParent;
+        this.creatorId = this._cardData.creatorId;
+
+        this.set({parent: targetParent});
+        this.set({translation: this.target.translation});
+
         this.listen("cycleModes", "cycleModes");
         this.isGizmoManipulator = true;
         this.cycleModes();
@@ -7,20 +23,19 @@ class GizmoActor {
         this.subscribe(this.target.id, "translationSet", "translateTarget");
         this.subscribe(this.target.id, "rotationSet", "rotateTarget");
         this.subscribe(this.target.id, "scaleSet", "scaleTarget");
-        this.subscribe(this.sessionId, "view-exit", "goodBye");
-        this.listen("goodBye", "goodBye");
     }
 
-    goodBye(viewId) {
-        let avatar = [...this.service("ActorManager").actors].find(([_k, actor]) => {
-            return actor.playerId === viewId;
-        });
-        if (avatar) {
-            avatar = avatar[1];
+    /*
+    initializeGizmo(data) {
+        let {parent, target, creatorId} = data;
+        if (parent) {
+            this.set({parent});
         }
-        if (!avatar) {return;}
-        avatar.removeGizmo();
+        this.target = target;
+        this.set({translation: target.translation});
+        this.creatorId = creatorId;
     }
+    */
 
     getScale(m) {
         let x = [m[0], m[1], m[2]];
@@ -103,7 +118,7 @@ class GizmoActor {
 
         let t = this.closestCorner(this.creatorId);
 
-        this.dataLocation = "3ryPlwPIvSHXjABwnuJjrMQYPp1JH2OnghLGR_cdAbCEGgYGAgFIXV0UGx4XAVwHAVwRAB0DBxcGXBsdXQddNRYkEAseOwEzGSMRMCoWQTUKEwQLBSc5JSsrQF0bHVwRAB0DBxcGXB8bEQAdBBcAARddBRckQ0E8AEUcRwABPTExOhMCHEMeNENFIAglOitFNBg0OjNGPiYQIl81Sl0WEwYTXUMeCgYrHDc7HkECPScbJxYKOSE6RCgXK0YgFwYgCzAYPioRCkEkAEYVLRU";
+        this.dataLocation = "./assets/SVG/property-sheet-buttton.svg";
 
         this.propertySheetButton = this.createCard({
             name: "property sheet button",
@@ -318,10 +333,12 @@ class GizmoActor {
     }
 }
 
-class GizmoPawn {
+class GizmoPawn extends PawnBehavior {
     setup() {
         this.lastTime = this.now();
-        if (!this.interval) {
+        this.isMine = this.actor.creatorId === this.viewId;
+
+        if (this.isMine && !this.interval) {
             this.interval = setInterval(() => this.checkInteraction(), 1000);
         }
 
@@ -340,7 +357,10 @@ class GizmoPawn {
             if (this.interval) {
                 clearInterval(this.interval);
             }
-            this.say("goodBye", this.viewId);
+
+            let avatar = this.getMyAvatar();
+            if ((!avatar.actor.gizmo) || avatar.actor.gizmo.id !== this.actor.id) {return;}
+            this.publish(avatar.actor.id, "goodByeGizmo", this.actor.id);
         }
     }
 
@@ -366,7 +386,7 @@ class GizmoPawn {
     }
 }
 
-class GizmoAxisActor {
+class GizmoAxisActor extends ActorBehavior {
     setup() {
         this.isGizmoManipulator = true;
         this.subscribe(this.parent.id, "translateTarget", "translateTarget");
@@ -377,11 +397,12 @@ class GizmoAxisActor {
     }
 }
 
-class GizmoAxisPawn {
+class GizmoAxisPawn extends PawnBehavior {
     setup() {
         this.originalColor = this.actor._cardData.color;
 
         let isMine = this.parent?.actor.creatorId === this.viewId;
+        this.isMine = isMine;
 
         this.shape.add(this.makeAxisHelper(isMine));
 
@@ -493,7 +514,7 @@ class GizmoAxisPawn {
     }
 }
 
-class GizmoRotorActor {
+class GizmoRotorActor extends ActorBehavior {
     setup() {
         this.isGizmoManipulator = true;
         this.subscribe(this.parent.id, "rotateTarget", "rotateTarget");
@@ -504,11 +525,12 @@ class GizmoRotorActor {
     }
 }
 
-class GizmoRotorPawn {
+class GizmoRotorPawn extends PawnBehavior {
     setup() {
         this.originalColor = this.actor._cardData.color;
 
         let isMine = this.parent?.actor.creatorId === this.viewId;
+        this.isMine = isMine;
         this.shape.add(this.createCircle(isMine ? this.actor._cardData.color : 0xffffff, this.actor._cardData.axis));
 
         if (isMine) {
@@ -562,6 +584,7 @@ class GizmoRotorPawn {
         window.planeHelper = new Microverse.THREE.PlaneHelper( interactionPlane, 10, 0xffff00 )
         this.shape.parent.add(window.planeHelper);
         */
+
         return interactionPlane;
     }
 
@@ -626,19 +649,25 @@ class GizmoRotorPawn {
         let projNewDirection = newDragPoint;
         let normal = this.localRotationAxis();
 
-        let sign;
+        let nSign;
         if (this.actor._cardData.axis[0] === 1) {
-            sign = normal[0] < 0 ? -1 : 1;
+            nSign = normal[0] < 0 ? 1 : -1;
         } else if (this.actor._cardData.axis[1] === 1) {
-            sign = normal[1] < 0 ? -1 : 1;
+            nSign = normal[1] < 0 ? 1 : -1;
         } else if (this.actor._cardData.axis[2] === 1) {
-            sign = normal[2] < 0 ? -1 : 1;
+            nSign = normal[2] < 0 ? 1 : -1;
         }
 
-        let angle = Math.atan2(v3_dot(v3_cross(projStartDirection, projNewDirection), normal), v3_dot(projStartDirection, projNewDirection)) * sign;
+        let dot = v3_dot(projStartDirection, projNewDirection);
+        let cross = v3_cross(projNewDirection, projStartDirection);
 
-        let axisAngle = q_axisAngle(this.actor._cardData.axis, angle);
-        const nextRotation = q_multiply(axisAngle, this.gizmoRotationAtDragStart);
+        let dotCross = v3_dot(cross, normal);
+        let acos = Math.acos(dot);
+        let sign = Math.sign(dotCross);
+
+        let axisAngle = q_axisAngle(this.actor._cardData.axis, acos * sign * nSign);
+
+        let nextRotation = q_multiply(axisAngle, this.gizmoRotationAtDragStart);
 
         this.publish(this.parent.actor.id, "rotateTarget", nextRotation)
         this.publish(this.parent.id, "interaction");
@@ -666,7 +695,7 @@ class GizmoRotorPawn {
     }
 }
 
-class GizmoScalerActor {
+class GizmoScalerActor extends ActorBehavior {
     setup() {
         this.isGizmoManipulator = true;
         this.subscribe(this.parent.id, "scaleTarget", "scaleTarget");
@@ -677,10 +706,11 @@ class GizmoScalerActor {
     }
 }
 
-class GizmoScalerPawn {
+class GizmoScalerPawn extends PawnBehavior {
     setup() {
         this.originalColor = this.actor._cardData.color;
         let isMine = this.parent?.actor.creatorId === this.viewId;
+        this.isMine = isMine;
 
         this.targetScaleSet();
 
@@ -838,15 +868,16 @@ class GizmoScalerPawn {
     }
 }
 
-class GizmoPropertySheetButtonActor {
+class GizmoPropertySheetButtonActor extends ActorBehavior {
     setup() {
         this.isGizmoManipulator = true;
     }
 }
 
-class GizmoPropertySheetButtonPawn {
+class GizmoPropertySheetButtonPawn extends PawnBehavior {
     setup() {
         let isMine = this.parent?.actor.creatorId === this.viewId;
+        this.isMine = isMine;
 
         this.subscribe(this.id, "2dModelLoaded", "svgLoaded");
         this.parent.call("Gizmo$GizmoPawn", "forceOnTop", this.shape);
@@ -892,9 +923,29 @@ class GizmoPropertySheetButtonPawn {
     }
 
     openPropertySheet(event) {
-        let avatar = Microverse.GetPawn(event.avatarId);
-        this.publish(this.actor.id, "openPropertySheet", {avatar: event.avatarId, distance: avatar.targetDistance});
-        this.destroy();
+        let avatarPawn = Microverse.GetPawn(event.avatarId);
+        let avatar = avatarPawn.actor;
+
+        if (!event.shiftKey) {
+            this.say("openPropertySheet", {avatar: avatar.id, distance: avatarPawn.targetDistance});
+            this.destroy(); // remove button
+        } else {
+            let target = this.actor.parent.target;
+            let targetPawn = Microverse.GetPawn(target.id);
+            let args = {target, targetPawn, avatar, avatarPawn};
+            // log func name and args by default (and reminder that func can be set)
+            let fn = window.microverseShiftClickPropFunc;
+            let keepGizmo = false;
+            if (fn) {
+                keepGizmo = fn(args);
+            } else {
+                console.log("microverseShiftClickPropFunc (not set)", args);
+            }
+            if (!keepGizmo) {
+                this.publish(avatar.actor.id, "goodByeGizmo", this.actor.id);
+            }
+        }
+        // this.say("openPropertySheet", {avatar: avatar.id, distance: avatarPawn.targetDistance});
     }
 }
 
