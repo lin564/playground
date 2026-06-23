@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>UltiSim DTO — Operational View</title>
+<title>UltiSim DTO — Workforce Decision Simulator</title>
 <style>
   :root{
-    --bg:#0a1526; --bg2:#0c1a30; --nav:#0b1830; --card:#0f1e39;
-    --card2:#12233f; --line:#1d3056; --ink:#eaf1fb; --muted:#8aa0c0; --soft:#647ea3;
+    --bg:#0a1526; --nav:#0b1830; --card:#0f1e39; --card2:#12233f; --line:#1d3056;
+    --ink:#eaf1fb; --muted:#8aa0c0; --soft:#647ea3;
     --cyan:#36c6f0; --head:#4aa9e6; --blue:#3b82f6; --blue2:#2563eb;
     --green:#3ddc97; --orange:#f5a623; --red:#ff5c5c; --purple:#9b6dff; --gray:#5b6b86;
     --shadow:0 8px 28px rgba(0,0,0,.35);
@@ -15,14 +15,16 @@
   *{box-sizing:border-box}
   html,body{margin:0;background:linear-gradient(180deg,#0a1526,#0b182f);color:var(--ink);
     font:13px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased;}
-  a{color:inherit}
   .head{font-size:11px;letter-spacing:.13em;color:var(--head);text-transform:uppercase;font-weight:700;}
+  .pilllive{font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:999px;
+    background:#16294a;color:#9fd0ff;border:1px solid #2a4f86}
+  .pillproj{font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:999px;
+    background:#2a2150;color:#c6b3ff;border:1px solid #4b3a86}
   /* nav */
   nav{display:flex;align-items:center;gap:18px;padding:12px 20px;background:var(--nav);
     border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
   .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1b3a6b,#0e2348);
-    border:1px solid #2c4f86;display:flex;align-items:center;
-    justify-content:center;color:#36c6f0;font-weight:800;font-size:13px;}
+    border:1px solid #2c4f86;display:flex;align-items:center;justify-content:center;color:#36c6f0;font-weight:800;}
   .brand b{font-size:15px} .brand b i{color:var(--cyan);font-style:normal}
   .brand .tag{font-size:10px;color:var(--soft);margin-top:1px}
   .tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:8px}
@@ -33,121 +35,158 @@
     display:flex;align-items:center;justify-content:center;cursor:pointer}
   .cta{background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:700;
     padding:9px 14px;border-radius:9px;cursor:pointer;font-size:13px;box-shadow:var(--shadow)}
-  /* status strip */
+  /* sandbox status strip */
   .status{display:flex;align-items:center;gap:8px;padding:9px 22px;border-bottom:1px solid var(--line);
-    background:#0a1730;color:var(--soft);font-size:12px;letter-spacing:.04em}
-  .status b{color:var(--green);font-weight:700}
+    background:#1a1430;color:#e9d9a6;font-size:12px;letter-spacing:.03em}
+  .status b{color:#ffd86b}
   .status .right{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted)}
   .blip{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(61,220,151,.16)}
+  /* purpose banner */
+  .purpose{max-width:1280px;margin:16px auto 0;padding:0 20px}
+  .pbox{background:linear-gradient(135deg,#11254a,#0f1e39);border:1px solid #244b86;
+    border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+  .pbox h1{margin:0;font-size:20px}
+  .pbox p{margin:6px 0 0;color:#bcd0ee;max-width:820px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  @media(max-width:780px){.steps{grid-template-columns:1fr}}
+  .step{background:#0d1c38;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:11px;align-items:flex-start}
+  .step .num{width:26px;height:26px;border-radius:50%;background:#16294a;border:1px solid #2a4f86;color:#7fd0ff;
+    font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .step .t{font-weight:700} .step .d{color:var(--muted);font-size:12px}
   /* layout */
   .main{display:grid;grid-template-columns:236px 1fr;gap:14px;padding:16px 20px 40px;max-width:1280px;margin:0 auto}
   @media(max-width:880px){.main{grid-template-columns:1fr}}
   .rail{display:flex;flex-direction:column;gap:12px}
+  .raillab{font-size:10px;letter-spacing:.1em;color:var(--soft);text-transform:uppercase;margin:2px 2px -2px;font-weight:700}
   .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:var(--shadow)}
-  .tile .l{font-size:10px;letter-spacing:.08em;color:var(--muted);font-weight:600}
+  .tile .l{font-size:10px;letter-spacing:.06em;color:var(--muted);font-weight:600}
   .tile .v{font-size:27px;font-weight:800;margin-top:5px;line-height:1}
   .tile .g{font-size:11px;color:var(--soft);margin-top:3px}
   .tile canvas{width:100%;height:34px;display:block;margin-top:6px}
   .content{display:flex;flex-direction:column;gap:14px;min-width:0}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
   .card .pad{padding:16px}
-  .card .cap{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-  .card .cap .sub{color:var(--muted);font-size:12px;font-weight:400;text-transform:none;letter-spacing:0}
+  .card .cap{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .card .cap .sub{color:var(--muted);font-size:12px}
   .legend{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
   .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
-  /* hero */
-  .hero{position:relative;height:380px;border-radius:12px;overflow:hidden;background:#070f1e;border:1px solid #16243d}
+  .hero{position:relative;height:360px;border-radius:12px;overflow:hidden;background:#070f1e;border:1px solid #16243d}
   .hero iframe{width:100%;height:100%;border:0;display:block}
-  /* flow funnel */
+  /* flow */
   .flow{display:grid;grid-template-columns:repeat(9,auto);align-items:center;justify-content:space-between;gap:4px}
-  @media(max-width:780px){.flow{grid-template-columns:1fr;justify-items:start;gap:10px}}
-  .node{text-align:center;min-width:96px}
-  .node .circ{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    margin:0 auto;font-size:20px;border:1px solid var(--line)}
-  .node .n{font-size:24px;font-weight:800;margin-top:7px}
+  @media(max-width:780px){.flow{grid-template-columns:1fr;gap:10px}}
+  .node{text-align:center;min-width:92px}
+  .node .circ{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:19px;border:1px solid var(--line)}
+  .node .n{font-size:22px;font-weight:800;margin-top:6px}
   .node .lab{font-size:11px;color:var(--muted);margin-top:2px}
   .arrow{color:#34507e;font-size:20px;text-align:center}
   @media(max-width:780px){.arrow{display:none}}
-  /* what-if */
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 14px}
-  .chip{padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:#0d1d39;color:#cfe0f5;
-    cursor:pointer;font-size:13px;display:flex;gap:7px;align-items:center}
-  .chip:hover{border-color:var(--cyan)}
-  .chip.on{background:#13294a;border-color:var(--cyan);color:#fff;font-weight:600}
-  .wf{display:grid;grid-template-columns:1.1fr repeat(4,1fr) auto;gap:12px;align-items:stretch}
-  @media(max-width:980px){.wf{grid-template-columns:1fr 1fr}}
-  .wfcard{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px}
-  .wfcard.def{background:linear-gradient(180deg,#13294a,#0f1e39)}
-  .wfcard .t{font-size:13px;font-weight:700}
-  .wfcard .small{color:var(--soft);font-size:11px;margin-top:4px}
-  .wfcard .lab{font-size:11px;color:var(--muted)}
-  .wfcard .big{font-size:22px;font-weight:800;margin-top:4px}
-  .wfcard .from{font-size:11px;color:var(--soft);margin-top:3px}
-  .wfcard canvas{width:100%;height:30px;display:block;margin-top:8px}
-  .runwrap{display:flex;align-items:center;justify-content:center}
-  .run{background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:700;
-    padding:12px 16px;border-radius:11px;cursor:pointer;width:100%;height:100%;font-size:13px;box-shadow:var(--shadow)}
+  /* decision console */
+  .console{border:1px solid #2a4f86;background:linear-gradient(180deg,#0f2143,#0f1e39)}
+  .grp{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin:6px 0 6px;font-weight:700}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:#0d1d39;color:#cfe0f5;cursor:pointer;font-size:13px;display:flex;gap:7px;align-items:center}
+  .chip:hover{border-color:var(--cyan)} .chip.on{background:#13294a;border-color:var(--cyan);color:#fff;font-weight:600}
+  .levers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0 4px}
+  @media(max-width:680px){.levers{grid-template-columns:1fr}}
+  .lever label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .lever label b{color:var(--cyan)}
+  .lever input[type=range]{width:100%;margin-top:7px;accent-color:var(--cyan)}
+  .baline{display:flex;align-items:center;gap:8px;margin:16px 0 8px}
+  .baline .arw{color:var(--soft)}
+  .ba{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:780px){.ba{grid-template-columns:1fr 1fr}}
+  .bacard{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px}
+  .bacard .lab{font-size:11px;color:var(--muted)}
+  .bacard .ba2{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+  .bacard .now{font-size:14px;color:var(--soft)}
+  .bacard .nx{font-size:22px;font-weight:800}
+  .bacard .ch{font-size:11px;font-weight:700;margin-top:4px}
+  .verdict{display:flex;gap:14px;align-items:center;margin-top:16px;padding:15px 16px;border-radius:14px;border:1px solid var(--line)}
+  .verdict .ic{font-size:30px}
+  .verdict .vh{font-weight:800;font-size:15px}
+  .verdict .vt{color:#cdddf2;font-size:12.5px;margin-top:2px}
+  .verdict.good{background:rgba(61,220,151,.10);border-color:#1f6e4f}
+  .verdict.warn{background:rgba(245,166,35,.10);border-color:#7a5a1e}
+  .verdict.bad{background:rgba(255,92,92,.10);border-color:#7a2e2e}
+  .run{margin-left:auto;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;font-weight:800;
+    padding:13px 20px;border-radius:12px;cursor:pointer;font-size:14px;box-shadow:var(--shadow);white-space:nowrap}
   .up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--soft)}
-  .story{display:flex;gap:12px;align-items:flex-start}
-  .story .face{font-size:26px}
-  .story b{color:#fff}
-  .modellink{color:var(--cyan);font-size:12px;font-weight:600;margin:2px 0 12px;display:inline-block}
 </style>
 </head>
 <body>
 <nav>
   <div class="logo">◆</div>
-  <div class="brand"><b>UltiSim<i>DTO</i></b><div class="tag">Operational View · Illustrative</div></div>
-  <div class="tabs">
-    <span class="tab on">Overview</span><span class="tab">Workforce</span><span class="tab">Capacity</span>
-    <span class="tab">Staffing</span><span class="tab">Scenarios</span><span class="tab">Readiness</span><span class="tab">Analytics</span>
-  </div>
-  <div class="navr">
-    <div class="icobtn" title="alerts">🔔</div><div class="icobtn" title="settings">⚙</div>
-    <button class="cta" id="playBtn">⏸ Live</button>
-  </div>
+  <div class="brand"><b>UltiSim<i>DTO</i></b><div class="tag">Workforce Decision Simulator</div></div>
+  <div class="tabs"><span class="tab on">Simulator</span><span class="tab">Workforce</span><span class="tab">Scenarios</span><span class="tab">Readiness</span><span class="tab">Analytics</span></div>
+  <div class="navr"><div class="icobtn">🔔</div><div class="icobtn">⚙</div><button class="cta" id="playBtn">⏸ Live</button></div>
 </nav>
 
 <div class="status">
-  <span class="blip"></span> SYSTEM STATUS <b>All Systems Operational</b>
-  <span class="right"><span class="blip"></span> Live · week <b id="wk" style="color:#eaf1fb">0</b> · <span id="clock">—</span></span>
+  🧪 SIMULATION MODE — <b>no real systems affected.</b>&nbsp;Test decisions safely on a digital twin of the workforce.
+  <span class="right"><span class="blip"></span> twin running · week <b id="wk" style="color:#eaf1fb">0</b> · <span id="clock">—</span></span>
 </div>
 
-<div class="main">
-  <!-- left KPI rail -->
-  <div class="rail" id="rail"></div>
+<!-- purpose banner -->
+<div class="purpose"><div class="pbox">
+  <h1>Test a workforce decision before you make it for real</h1>
+  <p>This is a “flight simulator” for the DLA workforce. Set up a decision or a crisis, run it on a live digital
+     twin, and see the projected impact on readiness, capacity, and your people — without touching any real system.</p>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div><div class="t">Set up a decision or crisis</div><div class="d">Pick a scenario or move the AI / deployment levers.</div></div></div>
+    <div class="step"><div class="num">2</div><div><div class="t">Preview the outcome</div><div class="d">See the projected result and a recommendation — before you commit.</div></div></div>
+    <div class="step"><div class="num">3</div><div><div class="t">Run it on the twin</div><div class="d">Commit the decision and watch the organization adapt week by week.</div></div></div>
+  </div>
+</div></div>
 
-  <!-- right content -->
+<div class="main">
+  <div class="rail">
+    <div class="raillab">Live state of the org <span class="pilllive">LIVE</span></div>
+    <div id="rail"></div>
+  </div>
+
   <div class="content">
-    <!-- hero: live 3D twin -->
+    <!-- hero -->
     <div class="card"><div class="pad">
-      <div class="cap"><span class="head">Organization Digital Twin</span>
-        <span class="sub">— live simulation of the DLA workforce</span>
+      <div class="cap"><span class="head">Live Digital Twin</span>
+        <span class="sub">— a safe, simulated model of the DLA workforce · experiment freely</span>
         <span class="legend">
-          <span><i style="background:#3ddc97"></i>Healthy</span>
-          <span><i style="background:#f5a623"></i>Stretched</span>
-          <span><i style="background:#ff5c5c"></i>Overloaded</span>
-          <span><i style="background:#5b6b86"></i>Deployed</span>
-        </span>
-      </div>
+          <span><i style="background:#3ddc97"></i>Healthy</span><span><i style="background:#f5a623"></i>Stretched</span>
+          <span><i style="background:#ff5c5c"></i>Overloaded</span><span><i style="background:#5b6b86"></i>Deployed</span>
+        </span></div>
       <div class="hero"><iframe id="twin" src="./dto-twin.html?embed=1" title="3D twin"></iframe></div>
     </div></div>
 
-    <!-- real-time workforce flow -->
+    <!-- flow -->
     <div class="card"><div class="pad">
-      <div class="cap"><span class="head">Real-Time Workforce Flow</span>
-        <span class="sub">— how work moves through the organization each week</span></div>
+      <div class="cap"><span class="head">Workforce Flow</span><span class="sub">— how work moves through the org each week</span></div>
       <div class="flow" id="flow"></div>
     </div></div>
 
-    <!-- what-if scenario modeling -->
-    <div class="card"><div class="pad">
-      <div class="cap"><span class="head">What-If Scenario Modeling</span></div>
-      <div class="story"><div class="face" id="face">🙂</div>
-        <div><div id="storyHead" style="font-weight:700">—</div>
-        <div id="storyBody" style="color:var(--muted)">Simulate changes. Predict outcomes. Make better decisions.</div></div></div>
-      <div class="chips" id="chips" style="margin-top:14px"></div>
-      <div class="wf" id="wf"></div>
+    <!-- DECISION CONSOLE -->
+    <div class="card console"><div class="pad">
+      <div class="cap"><span class="head">Decision Console</span>
+        <span class="sub">— set up a decision, preview the impact <span class="pillproj">PROJECTED</span>, then commit it</span></div>
+
+      <div class="grp">Quick scenarios — a decision you’d make, or a crisis you’d face</div>
+      <div class="chips" id="chips"></div>
+
+      <div class="levers">
+        <div class="lever"><label>🤖 Your decision: shift routine work to AI <b id="aiVal">20%</b></label>
+          <input type="range" id="aiSlide" min="0" max="100" value="20"></div>
+        <div class="lever"><label>🪖 Staff deployed (surge) <b id="suVal">0%</b></label>
+          <input type="range" id="suSlide" min="0" max="60" value="0"></div>
+      </div>
+
+      <div class="baline"><span class="head" style="color:var(--soft)">Projected impact</span>
+        <span class="sub">BEFORE (today)</span><span class="arw">→</span><span class="sub">AFTER (your decision)</span></div>
+      <div class="ba" id="ba"></div>
+
+      <div class="verdict warn" id="verdict">
+        <div class="ic" id="vIc">⚠️</div>
+        <div><div class="vh" id="vHead">—</div><div class="vt" id="vText">—</div></div>
+        <button class="run" id="runBtn">Run This Decision ▶</button>
+      </div>
     </div></div>
   </div>
 </div>
@@ -155,30 +194,29 @@
 <script>
 "use strict";
 // ============================================================================
-//  Agent-based engine (same model as dto-twin.html) — drives the dashboard KPIs
+//  Agent-based engine (same model as dto-twin.html)
 // ============================================================================
 const DIRS=["J1 Personnel","J3 Operations","J6 Information","J7 Readiness"];
 const PER=60, POP=DIRS.length*PER;
 const SCN=[
-  {name:"Normal Operations",      icon:"🟢", blurb:"A typical week",        surge:0.00,disruption:0.05,geo:0.10,ai:0.20},
-  {name:"Surge Deployment",       icon:"🪖", blurb:"Sudden call-up",        surge:0.35,disruption:0.15,geo:0.30,ai:0.25},
-  {name:"Supply-Chain Shock",     icon:"📦", blurb:"Logistics disruption",  surge:0.10,disruption:0.60,geo:0.40,ai:0.30},
-  {name:"Geopolitical Crisis",    icon:"🌍", blurb:"Great-power tensions",   surge:0.25,disruption:0.45,geo:0.75,ai:0.35},
-  {name:"AI-Augmented Workforce", icon:"🤖", blurb:"AI does routine work",   surge:0.10,disruption:0.20,geo:0.30,ai:0.85},
+  {name:"Today (baseline)",       icon:"🟢", surge:0.00,disruption:0.05,geo:0.10,ai:0.20},
+  {name:"Surge Deployment",       icon:"🪖", surge:0.35,disruption:0.15,geo:0.30,ai:0.25},
+  {name:"Supply-Chain Shock",     icon:"📦", surge:0.10,disruption:0.60,geo:0.40,ai:0.30},
+  {name:"Geopolitical Crisis",    icon:"🌍", surge:0.25,disruption:0.45,geo:0.75,ai:0.35},
+  {name:"Go All-In on AI",        icon:"🤖", surge:0.10,disruption:0.20,geo:0.30,ai:0.85},
 ];
 function createEngine(seed){
   let s=seed>>>0; const rand=()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};
   const agents=[];
   for(let d=0;d<DIRS.length;d++) for(let k=0;k<PER;k++)
-    agents.push({dir:d,skill:0.45+rand()*0.5,automatable:0.30+rand()*0.6,reserve:rand()<0.30,
-                 deployed:false,load:0.55,fatigue:0,aiAbsorb:0.12});
+    agents.push({dir:d,skill:0.45+rand()*0.5,automatable:0.30+rand()*0.6,reserve:rand()<0.30,deployed:false,load:0.55,fatigue:0,aiAbsorb:0.12});
   const cur={surge:0,disruption:0.05,geo:0.10,ai:0.20}, tgt={surge:0,disruption:0.05,geo:0.10,ai:0.20};
-  let week=0, kpi=null, per=null, idx=0;
-  function setScenario(i){idx=i;const x=SCN[i];tgt.surge=x.surge;tgt.disruption=x.disruption;tgt.geo=x.geo;tgt.ai=x.ai;}
-  function snap(i){const x=SCN[i];for(const k of["surge","disruption","geo","ai"]){cur[k]=x[k];tgt[k]=x[k];}idx=i;}
+  let week=0, kpi=null, per=null;
+  function setLevers(o){ for(const k in o) if(k in tgt) tgt[k]=o[k]; }
+  function snapParams(p){ for(const k of ["surge","disruption","geo","ai"]){cur[k]=p[k];tgt[k]=p[k];} }
   function step(){
     week++;
-    for(const k of["surge","disruption","geo","ai"]) cur[k]+=(tgt[k]-cur[k])*0.15;
+    for(const k of ["surge","disruption","geo","ai"]) cur[k]+=(tgt[k]-cur[k])*0.15;
     const desired=Math.round(cur.surge*POP); let dep=0; for(const a of agents) if(a.deployed) dep++;
     const N=6;
     if(dep<desired){let add=Math.min(N,desired-dep);for(const a of agents){if(add<=0)break;if(!a.deployed&&!a.reserve){a.deployed=true;add--;}}}
@@ -206,148 +244,128 @@ function createEngine(seed){
     const readiness=Math.max(0,Math.min(100,0.55*(100*healthy/POP)+0.30*coverage+0.15*(100-(cur.disruption*60+cur.geo*40))));
     const S=2;
     kpi={prod,readiness,coverage,automation:avgAi*100,overloaded,deployed,active,
-         flow:{incoming:Math.round(totalDemand*S),ai:Math.round(aiUnits*S),inprog:Math.round(humanDemand*S),
-               done:Math.round(completed*S),backlog:Math.round(backlog*S)}};
+         flow:{incoming:Math.round(totalDemand*S),ai:Math.round(aiUnits*S),inprog:Math.round(humanDemand*S),done:Math.round(completed*S),backlog:Math.round(backlog*S)}};
     per=pd;
   }
-  return {agents,setScenario,snap,step,state:()=>({week,idx,kpi,per})};
+  return {agents,setLevers,snapParams,step,state:()=>({week,kpi,per})};
 }
+function projectParams(p){const e=createEngine(0x2545f491);e.snapParams(p);for(let t=0;t<90;t++)e.step();return e.state().kpi;}
+const BASE=projectParams(SCN[0]);
 
-// baseline + per-scenario projections (steady state ~90 weeks)
-function project(i){const e=createEngine(0x2545f491);e.snap(i);for(let t=0;t<90;t++)e.step();return e.state().kpi;}
-const PROJ=SCN.map((_,i)=>project(i));
-const BASE=PROJ[0];
-
-// live engine
-const eng=createEngine(0x2545f491); eng.setScenario(0);
-let runningScn=0, previewScn=0, playing=true;
+const eng=createEngine(0x2545f491);     // the LIVE org (only changes when you Run)
+let playing=true;
+// the decision currently being designed in the console (previewed, not yet committed)
+const decision={surge:SCN[0].surge,disruption:SCN[0].disruption,geo:SCN[0].geo,ai:SCN[0].ai};
 
 // ============================================================================
-//  UI helpers
+//  UI
 // ============================================================================
 const $=id=>document.getElementById(id);
 function spark(cv,arr,color){
-  const dpr=devicePixelRatio||1, w=cv.clientWidth*dpr, h=cv.clientHeight*dpr;
+  const dpr=devicePixelRatio||1,w=cv.clientWidth*dpr,h=cv.clientHeight*dpr;
   if(cv.width!==w)cv.width=w; if(cv.height!==h)cv.height=h;
-  const x=cv.getContext("2d"); x.clearRect(0,0,w,h);
-  if(arr.length<2) return;
-  let mn=Math.min(...arr), mx=Math.max(...arr); if(mx-mn<1e-6){mn-=1;mx+=1;}
-  const pad=3*dpr;
-  x.beginPath(); x.lineWidth=2*dpr; x.strokeStyle=color;
-  arr.forEach((v,i)=>{const px=pad+(w-2*pad)*i/(arr.length-1); const py=h-pad-(h-2*pad)*(v-mn)/(mx-mn);
-    i?x.lineTo(px,py):x.moveTo(px,py);});
-  x.stroke();
-  // soft fill
-  x.lineTo(w-pad,h-pad); x.lineTo(pad,h-pad); x.closePath();
-  x.globalAlpha=.12; x.fillStyle=color; x.fill(); x.globalAlpha=1;
+  const x=cv.getContext("2d"); x.clearRect(0,0,w,h); if(arr.length<2)return;
+  let mn=Math.min(...arr),mx=Math.max(...arr); if(mx-mn<1e-6){mn-=1;mx+=1;}
+  const pad=3*dpr; x.beginPath(); x.lineWidth=2*dpr; x.strokeStyle=color;
+  arr.forEach((v,i)=>{const px=pad+(w-2*pad)*i/(arr.length-1),py=h-pad-(h-2*pad)*(v-mn)/(mx-mn); i?x.lineTo(px,py):x.moveTo(px,py);});
+  x.stroke(); x.lineTo(w-pad,h-pad); x.lineTo(pad,h-pad); x.closePath(); x.globalAlpha=.12; x.fillStyle=color; x.fill(); x.globalAlpha=1;
 }
-function ease(base,proj,n){const a=[];for(let i=0;i<n;i++){const t=i/(n-1);a.push(base+(proj-base)*(t*t*(3-2*t)));}return a;}
 
-// ---- left rail ----
+// left rail (LIVE)
 const RAIL=[
-  {key:"prod",       lab:"WORK CAPACITY",        fmt:v=>v.toFixed(1)+"×", goal:"Goal ≥ 10×",  color:"#3b82f6"},
-  {key:"readiness",  lab:"MISSION READINESS",    fmt:v=>v.toFixed(0)+"%", goal:"Goal ≥ 80%",  color:"#3ddc97"},
-  {key:"coverage",   lab:"STAFFING COVERAGE",    fmt:v=>v.toFixed(0)+"%", goal:"Goal ≥ 90%",  color:"#f5a623"},
-  {key:"overloaded", lab:"PEOPLE OVERSTRETCHED", fmt:v=>v.toFixed(0),     goal:"Goal < 20",   color:"#ff5c5c"},
-  {key:"automation", lab:"WORK AUTOMATED (AI)",  fmt:v=>v.toFixed(0)+"%", goal:"higher is better", color:"#36c6f0"},
+  {key:"prod",fmt:v=>v.toFixed(1)+"×",lab:"WORK CAPACITY",goal:"Goal ≥ 10×",color:"#3b82f6"},
+  {key:"readiness",fmt:v=>v.toFixed(0)+"%",lab:"MISSION READINESS",goal:"Goal ≥ 80%",color:"#3ddc97"},
+  {key:"coverage",fmt:v=>v.toFixed(0)+"%",lab:"STAFFING COVERAGE",goal:"Goal ≥ 90%",color:"#f5a623"},
+  {key:"overloaded",fmt:v=>v.toFixed(0),lab:"PEOPLE OVERSTRETCHED",goal:"Goal < 20",color:"#ff5c5c"},
+  {key:"automation",fmt:v=>v.toFixed(0)+"%",lab:"WORK AUTOMATED (AI)",goal:"higher is better",color:"#36c6f0"},
 ];
 const hist={}; RAIL.forEach(r=>hist[r.key]=[]);
-$("rail").innerHTML=RAIL.map((r,i)=>
-  `<div class="tile"><div class="l">${r.lab}</div><div class="v" id="rv${i}">—</div>
-   <div class="g">${r.goal}</div><canvas id="rc${i}"></canvas></div>`).join("");
+$("rail").innerHTML=RAIL.map((r,i)=>`<div class="tile"><div class="l">${r.lab}</div><div class="v" id="rv${i}">—</div><div class="g">${r.goal}</div><canvas id="rc${i}"></canvas></div>`).join("");
 
-// ---- flow funnel ----
-const FLOW=[
-  {k:"incoming",lab:"Incoming tasks",ic:"＋",c:"#ff5c5c"},
-  {k:"ai",      lab:"Handled by AI", ic:"🤖",c:"#36c6f0"},
-  {k:"inprog",  lab:"In progress",   ic:"⚙",c:"#f5a623"},
-  {k:"done",    lab:"Completed",     ic:"✓",c:"#3ddc97"},
-  {k:"backlog", lab:"Backlog",       ic:"⏳",c:"#9b6dff"},
-];
-$("flow").innerHTML=FLOW.map((f,i)=>
-  `<div class="node"><div class="circ" style="background:${f.c}22;color:${f.c}">${f.ic}</div>
-     <div class="n" id="fn${i}">0</div><div class="lab">${f.lab}</div></div>`
-   + (i<FLOW.length-1?`<div class="arrow">›</div>`:"")).join("");
+// flow
+const FLOW=[{k:"incoming",lab:"Incoming",ic:"＋",c:"#ff5c5c"},{k:"ai",lab:"Handled by AI",ic:"🤖",c:"#36c6f0"},
+  {k:"inprog",lab:"In progress",ic:"⚙",c:"#f5a623"},{k:"done",lab:"Completed",ic:"✓",c:"#3ddc97"},{k:"backlog",lab:"Backlog",ic:"⏳",c:"#9b6dff"}];
+$("flow").innerHTML=FLOW.map((f,i)=>`<div class="node"><div class="circ" style="background:${f.c}22;color:${f.c}">${f.ic}</div><div class="n" id="fn${i}">0</div><div class="lab">${f.lab}</div></div>`+(i<FLOW.length-1?`<div class="arrow">›</div>`:"")).join("");
 
-// ---- what-if chips + result cards ----
-$("chips").innerHTML=SCN.map((x,i)=>
-  `<div class="chip ${i===0?'on':''}" data-i="${i}"><span>${x.icon}</span>${x.name}</div>`).join("");
-document.querySelectorAll(".chip").forEach(el=>el.addEventListener("click",()=>setPreview(+el.dataset.i)));
+// chips
+$("chips").innerHTML=SCN.map((x,i)=>`<div class="chip ${i===0?'on':''}" data-i="${i}"><span>${x.icon}</span>${x.name}</div>`).join("");
+document.querySelectorAll(".chip").forEach(el=>el.addEventListener("click",()=>chooseScenario(+el.dataset.i)));
 
-const WF=[
-  {key:"prod",       lab:"Work capacity",        fmt:v=>v.toFixed(1)+"×", goodUp:true},
-  {key:"readiness",  lab:"Mission readiness",    fmt:v=>v.toFixed(0)+"%", goodUp:true},
-  {key:"coverage",   lab:"Staffing coverage",    fmt:v=>v.toFixed(0)+"%", goodUp:true},
-  {key:"overloaded", lab:"People overstretched", fmt:v=>v.toFixed(0),     goodUp:false},
-];
-function setPreview(i){
-  previewScn=i;
+// levers
+$("aiSlide").addEventListener("input",e=>{ decision.ai=+e.target.value/100; $("aiVal").textContent=e.target.value+"%"; clearChips(); preview(); });
+$("suSlide").addEventListener("input",e=>{ decision.surge=+e.target.value/100; $("suVal").textContent=e.target.value+"%"; clearChips(); preview(); });
+function clearChips(){ document.querySelectorAll(".chip").forEach(el=>el.classList.remove("on")); }
+function syncLevers(){ $("aiSlide").value=Math.round(decision.ai*100); $("aiVal").textContent=Math.round(decision.ai*100)+"%";
+  $("suSlide").value=Math.round(decision.surge*100); $("suVal").textContent=Math.round(decision.surge*100)+"%"; }
+
+function chooseScenario(i){
+  const x=SCN[i]; decision.surge=x.surge; decision.disruption=x.disruption; decision.geo=x.geo; decision.ai=x.ai;
   document.querySelectorAll(".chip").forEach(el=>el.classList.toggle("on",+el.dataset.i===i));
-  const p=PROJ[i], x=SCN[i];
-  let html=`<div class="wfcard def"><div class="t">Scenario: ${x.name}</div>
-    <div class="small">surge ${(x.surge*100)|0}% · disruption ${(x.disruption*100)|0}% · geo ${(x.geo*100)|0}% · AI ${(x.ai*100)|0}%</div>
-    <div class="small" style="margin-top:8px;color:#8aa0c0">Projected steady state vs a normal week →</div></div>`;
-  html+=WF.map((m,j)=>{
-    const now=p[m.key], base=BASE[m.key];
-    const rel = base!==0 ? (now-base)/Math.abs(base)*100 : 0;
-    const better = m.goodUp ? now>base : now<base;
-    const arrow = Math.abs(rel)<2 ? "→" : (now>base?"↑":"↓");
-    const cls = Math.abs(rel)<2 ? "flat" : (better?"up":"down");
-    return `<div class="wfcard"><div class="lab">${m.lab}</div>
-      <div class="big ${cls}">${arrow}${Math.abs(rel)<2?"":Math.abs(rel).toFixed(0)+"%"}</div>
-      <div class="from">from ${m.fmt(base)} to ${m.fmt(now)}</div>
-      <canvas id="wfc${j}"></canvas></div>`;
-  }).join("");
-  html+=`<div class="runwrap"><button class="run" id="runBtn">Run This<br>Scenario ▶</button></div>`;
-  $("wf").innerHTML=html;
-  WF.forEach((m,j)=>{const c=$("wfc"+j); const better=m.goodUp?PROJ[i][m.key]>BASE[m.key]:PROJ[i][m.key]<BASE[m.key];
-    spark(c, ease(BASE[m.key],PROJ[i][m.key],14), Math.abs((PROJ[i][m.key]-BASE[m.key]))<1e-6?"#647ea3":(better?"#3ddc97":"#ff5c5c"));});
-  $("runBtn").addEventListener("click",()=>runScenario(i));
+  syncLevers(); preview();
 }
-function runScenario(i){ runningScn=i; eng.setScenario(i); postTwin(i); }
 
-// ---- story / narrative ----
-function story(st){
-  const k=st.kpi, s=SCN[runningScn];
-  let worst=0; for(let d=1;d<4;d++) if(st.per[d].over>st.per[worst].over) worst=d;
-  const band=k.readiness>=78?["Ready","🙂"]:k.readiness>=58?["Strained","😐"]:["At risk","😟"];
-  $("face").textContent=band[1];
-  $("storyHead").textContent=`Running "${s.name}" — mission readiness ${band[0]} (${k.readiness.toFixed(0)}%)`;
-  const b=[];
-  if(k.deployed>0) b.push(`<b>${k.deployed}</b> staff deployed`);
-  if(k.overloaded>0) b.push(`<b>${k.overloaded}</b> overstretched${st.per[worst].over>0?` (worst: ${DIRS[worst]})`:""}`);
-  if(k.automation>=40) b.push(`AI handling <b>${k.automation.toFixed(0)}%</b> of routine work`);
-  b.push(`work capacity <b>${k.prod.toFixed(1)}×</b>`);
-  $("storyBody").innerHTML=b.join(" · ")+".";
+// before/after + verdict (PROJECTED)
+const BA=[
+  {key:"prod",fmt:v=>v.toFixed(1)+"×",lab:"Work capacity",goodUp:true},
+  {key:"readiness",fmt:v=>v.toFixed(0)+"%",lab:"Mission readiness",goodUp:true},
+  {key:"coverage",fmt:v=>v.toFixed(0)+"%",lab:"Staffing coverage",goodUp:true},
+  {key:"overloaded",fmt:v=>v.toFixed(0),lab:"People overstretched",goodUp:false},
+];
+function preview(){
+  const p=projectParams(decision);
+  $("ba").innerHTML=BA.map(m=>{
+    const now=BASE[m.key], nx=p[m.key], rel= now!==0? (nx-now)/Math.abs(now)*100:0;
+    const better=m.goodUp?nx>now:nx<now, flat=Math.abs(rel)<2;
+    const cls=flat?"flat":(better?"up":"down"), arr=flat?"→":(nx>now?"↑":"↓");
+    return `<div class="bacard"><div class="lab">${m.lab}</div>
+      <div class="ba2"><span class="now">${m.fmt(now)}</span><span class="arw">→</span><span class="nx ${cls}">${m.fmt(nx)}</span></div>
+      <div class="ch ${cls}">${arr} ${flat?"about the same":Math.abs(rel).toFixed(0)+"% "+(better?"better":"worse")}</div></div>`;
+  }).join("");
+  // verdict
+  const v=verdict(p), box=$("verdict");
+  box.className="verdict "+v.level; $("vIc").textContent=v.icon; $("vHead").textContent=v.head; $("vText").textContent=v.text;
 }
+function verdict(k){
+  const issues=[];
+  if(k.readiness<58) issues.push("mission readiness drops to a risky level");
+  else if(k.readiness<78) issues.push("readiness becomes strained");
+  if(k.overloaded>40) issues.push(`about ${k.overloaded} people would be overloaded`);
+  else if(k.overloaded>20) issues.push(`about ${k.overloaded} people would be stretched thin`);
+  if(k.coverage<90) issues.push("staffing coverage falls short of the workload");
+  let level,icon,head;
+  if(k.readiness>=78&&k.overloaded<=20){level="good";icon="✅";head="Recommended";}
+  else if(k.readiness>=58&&k.overloaded<=40){level="warn";icon="⚠️";head="Proceed with caution";}
+  else {level="bad";icon="⛔";head="High risk";}
+  const upside=k.prod>BASE.prod*1.15?` Upside: work capacity would rise to ${k.prod.toFixed(1)}× (from ${BASE.prod.toFixed(1)}× today).`:"";
+  const text=(issues.length?"Watch-outs: "+issues.join("; ")+".":"No major downside detected — readiness and staffing hold up.")+upside;
+  return {level,icon,head,text};
+}
+
+// commit the decision to the LIVE twin
+function runDecision(){ eng.setLevers(decision); postTwin(); flashRun(); }
+function postTwin(){ try{ $("twin").contentWindow.postMessage({t:"levers",...decision},"*"); }catch(e){} }
+function flashRun(){ const b=$("runBtn"); b.textContent="Running… ▶"; setTimeout(()=>b.textContent="Run This Decision ▶",1200); }
+$("runBtn").addEventListener("click",runDecision);
+$("twin").addEventListener("load",postTwin);
 
 // ============================================================================
-//  refresh + loop
+//  live refresh loop
 // ============================================================================
 function refresh(){
   const st=eng.state(); if(!st.kpi) return; const k=st.kpi;
   $("wk").textContent=st.week;
-  RAIL.forEach((r,i)=>{ $("rv"+i).textContent=r.fmt(k[r.key]); $("rv"+i).style.color=r.color;
-    const arr=hist[r.key]; arr.push(k[r.key]); if(arr.length>40)arr.shift(); spark($("rc"+i),arr,r.color); });
-  FLOW.forEach((f,i)=> $("fn"+i).textContent=k.flow[f.k].toLocaleString());
-  story(st);
+  RAIL.forEach((r,i)=>{$("rv"+i).textContent=r.fmt(k[r.key]);$("rv"+i).style.color=r.color;
+    const a=hist[r.key];a.push(k[r.key]);if(a.length>40)a.shift();spark($("rc"+i),a,r.color);});
+  FLOW.forEach((f,i)=>$("fn"+i).textContent=k.flow[f.k].toLocaleString());
 }
 function tick(){ if(playing) eng.step(); refresh(); }
-
-// ---- 3D twin hero control ----
-function postTwin(i){ try{ $("twin").contentWindow.postMessage({t:"scn",i},"*"); }catch(e){} }
-$("twin").addEventListener("load",()=>postTwin(runningScn));
-
-$("playBtn").addEventListener("click",e=>{ playing=!playing; e.target.textContent=playing?"⏸ Live":"▶ Paused"; });
-
-// clock
-function clock(){ const d=new Date(); $("clock").textContent=
-  d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}); }
+$("playBtn").addEventListener("click",e=>{playing=!playing;e.target.textContent=playing?"⏸ Live":"▶ Paused";});
+function clock(){const d=new Date();$("clock").textContent=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});}
 setInterval(clock,1000); clock();
 
 // boot
 addEventListener("resize",refresh);
-setPreview(0);
+syncLevers(); preview();
 eng.step(); refresh();
 setInterval(tick,700);
 </script>

@@ -431,7 +431,10 @@ if(new URLSearchParams(location.search).has("embed")){
   phi=0.78; radius=92; placeCam();
 }
 // allow a parent page (the dashboard) to drive the scenario directly
-addEventListener("message",e=>{ const m=e.data||{}; if(m && m.t==="scn") setScenario(m.i,false); });
+addEventListener("message",e=>{ const m=e.data||{};
+  if(m && m.t==="scn") setScenario(m.i,false);
+  else if(m && m.t==="levers"){ for(const k of ["surge","disruption","geo","ai"]) if(k in m) tgt[k]=m[k]; }
+});
 
 // boot
 setScenario(0,false);
