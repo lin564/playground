@@ -60,7 +60,9 @@ class LightPawn {
     constructBackground(options) {
         let assetManager = this.service("AssetManager").assetManager;
         let dataType = options.dataType;
-        if (!options.dataLocation) {return;}
+        // No environment map specified: paint a procedural gradient sky so the
+        // scene never falls back to a black void. Fully offline, no asset needed.
+        if (!options.dataLocation) {this.constructGradientSky(); return;}
         return this.getBuffer(options.dataLocation).then((buffer) => {
             return assetManager.load(buffer, dataType, Microverse.THREE, options).then((texture) => {
                 let TRM = this.service("ThreeRenderManager");
@@ -80,7 +82,35 @@ class LightPawn {
                 if(e) e.dispose();
                 texture.dispose();
             });
+        }).catch((err) => {
+            // e.g. the environment-map URL is unreachable — don't leave a black sky.
+            console.warn("Light: environment map failed to load, using gradient sky", err);
+            this.constructGradientSky();
         });
+    }
+
+    constructGradientSky() {
+        let THREE = Microverse.THREE;
+        let scene = this.service("ThreeRenderManager").scene;
+
+        // Vertical gradient painted into a small canvas, used as the sky.
+        let canvas = document.createElement("canvas");
+        canvas.width = 2;
+        canvas.height = 256;
+        let ctx = canvas.getContext("2d");
+        let grad = ctx.createLinearGradient(0, 0, 0, 256);
+        grad.addColorStop(0.0, "#6a8cc4"); // zenith
+        grad.addColorStop(0.5, "#aac3e6"); // mid sky
+        grad.addColorStop(1.0, "#e8eef5"); // horizon
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 2, 256);
+
+        let texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        let old = scene.background;
+        scene.background = texture;
+        if (old && old.dispose) old.dispose();
     }
 
     setupCSM(scene, camera, THREE) {

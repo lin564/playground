@@ -43,17 +43,16 @@ export function init(Constants) {
             }
         },
         {
-            // Scene lighting + environment map (see behaviors/default/csmLights.js).
-            // The HDR below is the Microverse default; swap dataLocation/fileName
-            // for a local asset under ./assets to be fully self-contained.
+            // Scene lighting (see behaviors/default/csmLights.js). With no
+            // environment map, csmLights paints a procedural gradient sky so the
+            // world is fully self-contained / offline. To use a photographic sky
+            // later, add a local equirectangular image under ./assets and set
+            // dataLocation + fileName + dataType here.
             card: {
                 name: "light",
                 layers: ["light"],
                 type: "lighting",
                 behaviorModules: ["Light"],
-                dataLocation: "3OF2-s4U1ZOJduGATmLEIXo1iTkQHd5ZBknKgL5SvqpQJzs7Pzx1YGApJiMqPGE6PGEsPSA-Oio7YSYgYDpgCCsZLTYjBjwOJB4sDRcrfAg3Ljk2OBoEGBYWfWAmIGEsPSA-Oio7YSImLD0gOSo9PCpgPwB9AAIIISx8YiYneScqKyQaIisNLHkaGT8YKg56JQwQfHstPiNiGQ49e2ArLjsuYCMBPgMiCQt3OQskGhcleSp9HQIIfXseHgo7EAo9CB48FRwpegsCLH4OIwY",
-                fileName: "/abandoned_parking_4k.jpg",
-                dataType: "jpg",
             }
         }
     ];
