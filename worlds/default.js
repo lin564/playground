@@ -21,7 +21,8 @@ export function init(Constants) {
 
     Constants.UserBehaviorDirectory = "behaviors/default";
     Constants.UserBehaviorModules = [
-        "csmLights.js"
+        "csmLights.js",
+        "dtoEngine.js"
     ];
 
     Constants.DefaultCards = [
@@ -64,7 +65,23 @@ export function init(Constants) {
                  ],
                 modelType: "glb",
                 name: "/sci-fi_door_game.glb",
-                
+
+            }
+        },
+        {
+            // Digital Twin of the Organization — Phase I scenario-planning
+            // dashboard (DLA26BZ03-NV011). See behaviors/default/dtoEngine.js
+            // and docs/DTO_Solution_Design.md.
+            card: {
+                name: "DTO Dashboard",
+                type: "object",
+                behaviorModules: ["DTO"],
+                layers: ["pointer"],
+                translation: [0, 1.6, -6],
+                rotation: [0, 0, 0],
+                width: 4.2,
+                height: 2.6,
+                shadow: true,
             }
         }
 
