@@ -9,11 +9,13 @@ services:
   reflector:
     build: .
     restart: unless-stopped
-    # Only needed if you reach the reflector directly (no TLS front-end).
-    # When using the caddy/cloudflared services below, you can remove this —
-    # they reach `reflector:9090` over the internal compose network.
-    ports:
-      - "9090:9090"
+    # Host port only needed to reach the reflector DIRECTLY (no TLS front-end).
+    # With the cloudflared tunnel below it's unnecessary — cloudflared reaches
+    # `reflector:9090` over Docker's internal network — and publishing it can
+    # clash with anything else already bound to host port 9090. Uncomment only
+    # if you need direct host access.
+    # ports:
+    #   - "9090:9090"
 
   # --- Front-end A: Caddy auto-TLS (no domain needed, via sslip.io) ---
   # Set your hostname in deploy/reflector/.env, e.g. (for VM IP 203.0.113.5):
