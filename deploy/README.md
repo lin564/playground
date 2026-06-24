@@ -45,26 +45,42 @@ the correct response from a WebSocket server):
 curl -i https://<your-app-name>.fly.dev/
 ```
 
-### Option B: any VPS with Docker + Caddy (auto-TLS)
+### Option B: your own cloud VM with Docker + Caddy (no domain needed)
 
-On a server with a domain pointed at it (e.g. `reflector.example.com`):
+This uses **sslip.io** — a free wildcard DNS service where `203-0-113-5.sslip.io`
+resolves to IP `203.0.113.5` — so Caddy can get a real Let's Encrypt cert from
+just your VM's public IP. No domain registration, no DNS account.
+
+On the VM (with Docker + the Docker Compose plugin):
 
 ```bash
+# 1. Open ports 80 and 443 in the VM's firewall / cloud security group.
+
+# 2. Find your VM's public IP, e.g. 203.0.113.5, and set the hostname
+#    (dashes, not dots) in deploy/reflector/.env :
 cd deploy/reflector
-docker build -t my-reflector .
-docker run -d --restart unless-stopped -p 9090:9090 --name reflector my-reflector
+echo "REFLECTOR_HOSTNAME=203-0-113-5.sslip.io" > .env     # <-- your IP, dashed
+
+# 3. Uncomment the `caddy` service in docker-compose.yml, then:
+docker compose up -d
 ```
 
-Put Caddy in front for automatic HTTPS/WSS (Caddy proxies WebSockets natively):
+Caddy fetches the TLS cert automatically. Your reflector is then at:
 
 ```
-# /etc/caddy/Caddyfile
-reflector.example.com {
-    reverse_proxy 127.0.0.1:9090
-}
+wss://203-0-113-5.sslip.io       # <-- your dashed IP
 ```
 
-Your reflector is then at `wss://reflector.example.com`.
+Verify (426 "Upgrade Required" is the correct response from a WS server):
+
+```bash
+curl -i https://203-0-113-5.sslip.io/
+```
+
+> Got a real domain later? Point an A-record at the VM, set
+> `REFLECTOR_HOSTNAME=reflector.yourdomain.com`, and `docker compose up -d` —
+> Caddy re-issues the cert. Behind NAT / no public IP instead? Use the
+> `cloudflared` (Cloudflare Tunnel) service in the same compose file.
 
 > Render, Railway, and similar container hosts also work — point them at
 > `deploy/reflector/Dockerfile`; they provide the `wss://` URL.

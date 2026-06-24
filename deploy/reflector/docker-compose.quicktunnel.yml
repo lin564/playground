@@ -1,0 +1,29 @@
+# Easiest way to share your world from your own PC.
+#
+# Runs the reflector AND a Cloudflare "quick tunnel" that gives it a temporary
+# PUBLIC https/wss address (a *.trycloudflare.com URL) — no domain, no port
+# forwarding, no Cloudflare account needed.
+#
+# Start it (from this deploy/reflector folder):
+#   docker compose -f docker-compose.quicktunnel.yml up
+#
+# Watch the logs for a line like:
+#   https://random-words-here.trycloudflare.com
+# Your reflector address is that URL with https -> wss, e.g.
+#   wss://random-words-here.trycloudflare.com
+#
+# Stop it with Ctrl+C. NOTE: the URL changes every time you restart, and the
+# tunnel only works while this stays running. Great for testing / sharing with
+# friends; for a permanent address see deploy/README.md.
+
+services:
+  reflector:
+    build: .
+    restart: unless-stopped
+
+  quicktunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://reflector:9090
+    depends_on:
+      - reflector

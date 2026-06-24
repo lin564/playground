@@ -1,0 +1,11 @@
+# Caddy auto-TLS in front of the reflector.
+#
+# REFLECTOR_HOSTNAME is your public hostname. With no domain, use sslip.io keyed
+# to your VM's public IP, e.g. for IP 203.0.113.5 set:
+#   REFLECTOR_HOSTNAME=203-0-113-5.sslip.io
+# Caddy fetches a Let's Encrypt cert for it automatically (needs ports 80+443
+# open and the IP reachable). Your reflector is then at wss://<that hostname>.
+
+{$REFLECTOR_HOSTNAME} {
+	reverse_proxy reflector:9090
+}

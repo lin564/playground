@@ -3,24 +3,42 @@
 #   docker compose up -d        # reflector on ws://<this-host>:9090
 #
 # Port 9090 is plain ws. Put TLS in front of it to get the wss:// that browsers
-# require. Two easy options:
-#   1. Cloudflare Tunnel  — uncomment the `cloudflared` service below (no public
-#      IP / open ports needed; Cloudflare serves wss:// at your hostname).
-#   2. Caddy / nginx on the host — see deploy/README.md.
+# require. Pick ONE of the front-ends below.
 
 services:
   reflector:
     build: .
     restart: unless-stopped
+    # Only needed if you reach the reflector directly (no TLS front-end).
+    # When using the caddy/cloudflared services below, you can remove this —
+    # they reach `reflector:9090` over the internal compose network.
     ports:
-      - "9090:9090"   # drop this line if ONLY cloudflared reaches it (same network)
+      - "9090:9090"
 
-  # --- Option 1: Cloudflare Tunnel (recommended if you're on Cloudflare) ---
-  # 1. In the Cloudflare dashboard: Zero Trust -> Networks -> Tunnels -> create a
-  #    tunnel, add a Public Hostname (e.g. reflector.yourdomain.com) pointing at
-  #    service  http://reflector:9090 , and copy the tunnel token.
-  # 2. Put the token in deploy/reflector/.env as  TUNNEL_TOKEN=...
-  # 3. Uncomment below and `docker compose up -d`.
+  # --- Front-end A: Caddy auto-TLS (no domain needed, via sslip.io) ---
+  # Set your hostname in deploy/reflector/.env, e.g. (for VM IP 203.0.113.5):
+  #   REFLECTOR_HOSTNAME=203-0-113-5.sslip.io
+  # Open ports 80 + 443 on the VM, uncomment, then `docker compose up -d`.
+  # Reflector is then at  wss://${REFLECTOR_HOSTNAME}
+  #
+  # caddy:
+  #   image: caddy:2
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   environment:
+  #     - REFLECTOR_HOSTNAME=${REFLECTOR_HOSTNAME}
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile:ro
+  #     - caddy_data:/data
+  #   depends_on:
+  #     - reflector
+
+  # --- Front-end B: Cloudflare Tunnel (no public IP / open ports needed) ---
+  # Create a tunnel in the Cloudflare dashboard (Zero Trust -> Networks ->
+  # Tunnels), point a Public Hostname at http://reflector:9090, put the token in
+  # deploy/reflector/.env as TUNNEL_TOKEN=..., uncomment, `docker compose up -d`.
   #
   # cloudflared:
   #   image: cloudflare/cloudflared:latest
@@ -30,3 +48,6 @@ services:
   #     - TUNNEL_TOKEN=${TUNNEL_TOKEN}
   #   depends_on:
   #     - reflector
+
+volumes:
+  caddy_data:
