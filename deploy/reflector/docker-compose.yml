@@ -1,0 +1,32 @@
+# Run the standalone reflector with Docker.
+#
+#   docker compose up -d        # reflector on ws://<this-host>:9090
+#
+# Port 9090 is plain ws. Put TLS in front of it to get the wss:// that browsers
+# require. Two easy options:
+#   1. Cloudflare Tunnel  — uncomment the `cloudflared` service below (no public
+#      IP / open ports needed; Cloudflare serves wss:// at your hostname).
+#   2. Caddy / nginx on the host — see deploy/README.md.
+
+services:
+  reflector:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "9090:9090"   # drop this line if ONLY cloudflared reaches it (same network)
+
+  # --- Option 1: Cloudflare Tunnel (recommended if you're on Cloudflare) ---
+  # 1. In the Cloudflare dashboard: Zero Trust -> Networks -> Tunnels -> create a
+  #    tunnel, add a Public Hostname (e.g. reflector.yourdomain.com) pointing at
+  #    service  http://reflector:9090 , and copy the tunnel token.
+  # 2. Put the token in deploy/reflector/.env as  TUNNEL_TOKEN=...
+  # 3. Uncomment below and `docker compose up -d`.
+  #
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   restart: unless-stopped
+  #   command: tunnel --no-autoupdate run
+  #   environment:
+  #     - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+  #   depends_on:
+  #     - reflector

@@ -69,9 +69,49 @@ Your reflector is then at `wss://reflector.example.com`.
 > Render, Railway, and similar container hosts also work — point them at
 > `deploy/reflector/Dockerfile`; they provide the `wss://` URL.
 
+### Option C: Cloudflare Tunnel (recommended if you're on Cloudflare)
+
+No public IP, open ports, or manual TLS — Cloudflare serves `wss://` at a
+hostname on your domain and tunnels to the reflector. Pairs naturally with the
+Cloudflare Pages client below.
+
+1. Run the reflector on any always-on box (your server, a small VM, even a
+   spare machine): `cd deploy/reflector && docker compose up -d`.
+2. In the Cloudflare dashboard: **Zero Trust → Networks → Tunnels → Create a
+   tunnel**. Add a **Public Hostname** — e.g. `reflector.yourdomain.com` —
+   pointing at service **`http://reflector:9090`** (or `http://localhost:9090`
+   if cloudflared runs on the host). Copy the tunnel token.
+3. Put the token in `deploy/reflector/.env` as `TUNNEL_TOKEN=...`, uncomment the
+   `cloudflared` service in `docker-compose.yml`, and `docker compose up -d`.
+
+Your reflector is then at `wss://reflector.yourdomain.com`. (Cloudflare proxies
+WebSockets by default; the reflector's frequent ticks keep the connection from
+idling out.)
+
 ---
 
-## Step 2 — Deploy the client (GitHub Pages)
+## Step 2 — Deploy the client
+
+### Cloudflare Pages (served at a root path — no subpath quirks)
+
+The repo IS the static site (no build step), so configure Pages to serve it
+directly:
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**,
+   pick this repo.
+2. Build settings: **Framework preset = None**, **Build command = (empty)**,
+   **Build output directory = `/`** (the repo root).
+3. Set the **Production branch** to whatever you want live (e.g. `main`, or this
+   working branch for now).
+4. Deploy → your site is at `https://<project>.pages.dev/` (or attach a custom
+   domain).
+
+> `apiKey.js` is committed in this repo, so it ships with the site. That's fine
+> for standalone mode (the client uses `apiKey:"none"` when `?reflector=` is
+> set), but if you'd rather not publish it, add it to `.gitignore` and provide
+> it via the host instead.
+
+### Alternative: GitHub Pages (GitHub Actions)
 
 This repo already has `.github/workflows/pages.yml`, which publishes the repo to
 GitHub Pages on every push to `main`.
