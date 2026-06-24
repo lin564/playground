@@ -1,1 +1,5 @@
 node_modules
+
+# Local secrets — never commit (e.g. Cloudflare Tunnel token)
+.env
+deploy/reflector/.env

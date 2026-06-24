@@ -35,19 +35,18 @@ services:
   #   depends_on:
   #     - reflector
 
-  # --- Front-end B: Cloudflare Tunnel (no public IP / open ports needed) ---
+  # --- Front-end B: Cloudflare Tunnel (named tunnel, permanent address) ---
   # Create a tunnel in the Cloudflare dashboard (Zero Trust -> Networks ->
   # Tunnels), point a Public Hostname at http://reflector:9090, put the token in
-  # deploy/reflector/.env as TUNNEL_TOKEN=..., uncomment, `docker compose up -d`.
-  #
-  # cloudflared:
-  #   image: cloudflare/cloudflared:latest
-  #   restart: unless-stopped
-  #   command: tunnel --no-autoupdate run
-  #   environment:
-  #     - TUNNEL_TOKEN=${TUNNEL_TOKEN}
-  #   depends_on:
-  #     - reflector
+  # deploy/reflector/.env as TUNNEL_TOKEN=..., then `docker compose up -d`.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - reflector
 
 volumes:
   caddy_data:
