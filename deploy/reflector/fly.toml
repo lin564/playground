@@ -1,0 +1,24 @@
+# Fly.io deployment for the standalone Croquet reflector.
+#
+# First run `fly launch --no-deploy` in this directory: it will pick an app name
+# and region and rewrite the `app`/`primary_region` fields below. Then deploy
+# with `fly deploy`. Your reflector will be reachable at
+#   wss://<app-name>.fly.dev
+# which is what you put in the world's ?reflector= link.
+
+app = "REPLACE-ME-reflector"      # set by `fly launch`
+primary_region = "iad"            # pick a region close to most of your users
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 9090            # the reflector's hardcoded port
+  force_https = true              # redirect http -> https (so links are wss)
+  auto_stop_machines = false      # keep it always-on; stopping kills live sessions
+  auto_start_machines = true
+  min_machines_running = 1        # one always-running instance
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"                # node + deps; 256mb can OOM at startup
