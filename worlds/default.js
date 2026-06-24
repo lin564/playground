@@ -58,22 +58,28 @@ export function init(Constants) {
         }
 
         // ---------------------------------------------------------------------
-        // A committed, animated sample model (Khronos "Fox", CC0). Temporarily
-        // disabled while we debug a load hang — the Fox.glb is committed under
-        // ./assets and will be re-enabled as a card here.
+        // A committed, animated sample model (Khronos "Fox", CC0). It loads
+        // identically for EVERYONE, EVERY session — no runtime upload needed,
+        // because the .glb ships with the site. It auto-plays its first clip;
+        // the "pointer" layer + "Animation" behavior let you CLICK it to step
+        // through its clips (Survey / Walk / Run). See docs/BLENDER.md.
         //
-        // ,{
-        //     card: {
-        //         name: "fox",
-        //         type: "3d",
-        //         modelType: "glb",
-        //         dataLocation: "./assets/Fox.glb",
-        //         layers: ["pointer"],
-        //         behaviorModules: ["Animation"],
-        //         translation: [0, -1.7, -8],
-        //         scale: [0.05, 0.05, 0.05],
-        //         shadow: true,
-        //     }
-        // }
+        // To make a model WALKABLE (walk ON it, or go INSIDE a building model),
+        // add "walk" to its layers, e.g. layers: ["walk", "pointer"]. To add
+        // your own model: drop its .glb in ./assets and copy this card, changing
+        // `name`, `dataLocation`, `scale`, and `translation`.
+        ,{
+            card: {
+                name: "fox",
+                type: "3d",
+                modelType: "glb",
+                dataLocation: "./assets/Fox.glb",
+                layers: ["pointer"],
+                behaviorModules: ["Animation"],
+                translation: [0, -1.7, -8],   // on the ground (y=-1.7), 8m ahead
+                scale: [0.05, 0.05, 0.05],     // Fox is authored large; tweak to taste
+                shadow: true,
+            }
+        }
     ];
 }
