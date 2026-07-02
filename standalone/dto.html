@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Digital Twin of the Organization — DLA26BZ03-NV011 (Local)</title>
+<style>
+  :root {
+    --bg: #0a1426; --panel: #14223b; --panel2: #13294b; --ink: #ffffff;
+    --muted: #9fb3d6; --dim: #7f93b5; --accent: #5fa8ff;
+    --good: #36d399; --warn: #fbbd23; --bad: #f87272; --track: #0a1426;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 40px; }
+  header.app { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  header.app h1 { font-size: 24px; margin: 0; letter-spacing: .2px; }
+  header.app .sub { color: var(--accent); font-size: 14px; }
+  .pill { margin-left: auto; font-size: 12px; color: var(--muted);
+    background: var(--panel); border: 1px solid #21304d; padding: 6px 10px; border-radius: 999px; }
+  .pill b { color: var(--good); }
+
+  .banner { margin-top: 18px; background: var(--panel2); border: 1px solid #21304d;
+    border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 16px; }
+  .banner .label { font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+  .banner .name { font-size: 20px; font-weight: 700; margin-top: 2px; }
+  .banner .desc { font-size: 13px; color: var(--dim); margin-top: 4px; }
+  .banner .controls { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  button, select {
+    background: var(--panel); color: var(--ink); border: 1px solid #2a3c5e;
+    border-radius: 8px; padding: 9px 14px; font-size: 14px; cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button:active { transform: translateY(1px); }
+  .primary { background: #19407a; border-color: #2c5fae; }
+
+  .grid { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--panel); border: 1px solid #21304d; border-radius: 14px; padding: 16px; min-height: 140px;
+    display: flex; flex-direction: column; }
+  .kpi .k-label { color: var(--dim); font-size: 12px; letter-spacing: .08em; }
+  .kpi .k-val { font-size: 40px; font-weight: 800; margin-top: 6px; line-height: 1; }
+  .kpi .k-sub { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .bar { margin-top: auto; height: 10px; background: var(--track); border-radius: 6px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; width: 0; border-radius: 6px; transition: width .5s ease; }
+
+  .lower { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 820px) { .lower { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid #21304d; border-radius: 14px; padding: 16px; }
+  .card h3 { margin: 0 0 12px; font-size: 14px; color: var(--muted); letter-spacing: .06em; font-weight: 600; }
+  .row { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; }
+  .row .nm { width: 120px; color: var(--dim); }
+  .row .bar { flex: 1; margin: 0; }
+  .row .pct { width: 44px; text-align: right; color: var(--ink); }
+  .drivers .row .nm { width: 150px; }
+
+  footer.app { margin-top: 20px; color: var(--dim); font-size: 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  footer.app .hint { margin-left: auto; color: var(--accent); }
+  .note { margin-top: 22px; color: var(--dim); font-size: 12px; border-top: 1px solid #1b294633; padding-top: 14px; }
+  .note code { color: var(--muted); background: #0e1a30; padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <h1>Digital Twin of the Organization</h1>
+    <span class="sub">DLA26BZ03-NV011 · UltiSim Inc. · Local build</span>
+    <span class="pill" id="syncPill">windows: <b id="winCount">1</b> · <span id="syncMode">standalone</span></span>
+  </header>
+
+  <section class="banner">
+    <div>
+      <div class="label">ACTIVE SCENARIO</div>
+      <div class="name" id="scnName">—</div>
+      <div class="desc" id="scnDesc">—</div>
+    </div>
+    <div class="controls">
+      <button id="prevBtn" title="Previous scenario">◀ Prev</button>
+      <select id="scnSelect" title="Jump to scenario"></select>
+      <button id="nextBtn" class="primary" title="Next scenario">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="grid" id="kpis"></section>
+
+  <section class="lower">
+    <div class="card">
+      <h3>READINESS BY DIRECTORATE</h3>
+      <div id="dirBreak"></div>
+    </div>
+    <div class="card drivers">
+      <h3>SCENARIO DRIVERS</h3>
+      <div id="drivers"></div>
+    </div>
+  </section>
+
+  <footer class="app">
+    <span><b id="popN">0</b> workforce agents</span>
+    <span><b id="recN">0</b> synthetic records (PII-free)</span>
+    <span>refresh #<b id="tickN">0</b></span>
+    <span class="hint">▶ Next / Prev to run scenarios · open in 2 windows to see live sync</span>
+  </footer>
+
+  <p class="note">
+    <b>How this maps to the Croquet/Multisynq idea.</b> The engine below is a <i>deterministic model</i>
+    (a seeded simulation) and the page is a pure <i>view</i> of it — exactly Croquet's architecture.
+    The only thing removed is the network reflector: this runs entirely on your desktop, offline, with no
+    API key. Opening multiple windows shares the active scenario over the browser's local
+    <code>BroadcastChannel</code> — a same-machine stand-in for the reflector. For guaranteed cross-window
+    sync, serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000/dto.html</code>;
+    double-clicking the file also works (sync is best-effort under <code>file://</code>).
+  </p>
+</div>
+
+<script>
+"use strict";
+// ----------------------------------------------------------------------------
+// Digital Twin of the Organization — local, dependency-free engine.
+// Deterministic model (seeded) + reactive view. Mirrors behaviors/default/dtoEngine.js.
+// ----------------------------------------------------------------------------
+
+const DIRECTORATES = ["J1 Personnel", "J3 Operations", "J6 Information", "J7 Readiness"];
+
+const SCENARIOS = [
+  { name: "Baseline Steady-State",    surge: 0.00, disruption: 0.05, geo: 0.10, aiAdoption: 0.20,
+    desc: "Reference point: normal operations, light AI adoption." },
+  { name: "Surge Deployment",         surge: 0.35, disruption: 0.15, geo: 0.30, aiAdoption: 0.25,
+    desc: "Sudden deployment — can deployable staff backfill without mission degradation?" },
+  { name: "Supply-Chain Disruption",  surge: 0.10, disruption: 0.60, geo: 0.40, aiAdoption: 0.30,
+    desc: "Major logistics shock — reacting rapidly to supply-chain disruption." },
+  { name: "Geopolitical Shift (GPC)", surge: 0.25, disruption: 0.45, geo: 0.75, aiAdoption: 0.35,
+    desc: "Great-power competition — countering the scale of near-peer adversaries." },
+  { name: "AI-Augmented Workforce",   surge: 0.10, disruption: 0.20, geo: 0.30, aiAdoption: 0.85,
+    desc: "Heavy human-machine teaming — structural pathway to the 10x productivity target." },
+];
+
+const Engine = {
+  seed: 0x2545f491,
+  scenarioIndex: 0,
+  tick: 0,
+  syntheticRecords: 0,
+  agents: [],
+  population: 240,
+
+  rand() { // deterministic LCG -> [0,1)
+    this.seed = (Math.imul(this.seed, 1664525) + 1013904223) >>> 0;
+    return this.seed / 4294967296;
+  },
+
+  buildWorkforce() {
+    this.seed = 0x2545f491;
+    this.agents = [];
+    for (let i = 0; i < this.population; i++) {
+      this.agents.push({
+        dir: DIRECTORATES[i % DIRECTORATES.length],
+        skill: 0.45 + this.rand() * 0.5,
+        manualLoad: 4 + this.rand() * 6,
+        automatable: 0.3 + this.rand() * 0.6,
+        deployable: this.rand() > 0.25,
+      });
+    }
+  },
+
+  setScenario(i) {
+    if (i >= 0 && i < SCENARIOS.length) this.scenarioIndex = i;
+  },
+  cycle(dir) {
+    const n = SCENARIOS.length;
+    this.scenarioIndex = (this.scenarioIndex + dir + n) % n;
+  },
+
+  step() {
+    this.tick += 1;
+    this.syntheticRecords += 2500 + Math.floor(this.rand() * 500);
+  },
+
+  computeState() {
+    const s = SCENARIOS[this.scenarioIndex];
+    let totalManual = 0, residualManual = 0, deployableCount = 0, skillSum = 0;
+    // per-directorate accumulators
+    const byDir = {};
+    DIRECTORATES.forEach(d => byDir[d] = { skill: 0, n: 0 });
+
+    for (const a of this.agents) {
+      totalManual += a.manualLoad;
+      const absorbed = a.manualLoad * a.automatable * s.aiAdoption;
+      residualManual += a.manualLoad - absorbed;
+      skillSum += a.skill;
+      if (a.deployable) deployableCount += 1;
+      byDir[a.dir].skill += a.skill; byDir[a.dir].n += 1;
+    }
+
+    const automatedHours = totalManual - residualManual;
+    const laborLever = totalManual / Math.max(residualManual, 1);
+    const teamingLever = 1 + 9 * Math.pow(s.aiAdoption, 1.4);
+    let productivity = laborLever * teamingLever;
+    productivity *= (1 - 0.25 * s.disruption) * (1 - 0.20 * s.surge);
+    productivity = Math.max(1, productivity);
+
+    const deployedGap = Math.round(this.population * s.surge);
+    const surgeCoverage = deployedGap === 0 ? 100
+      : Math.min(100, (deployableCount / deployedGap) * 100);
+
+    const skillBase = (skillSum / this.population) * 100;
+    const noise = (this.rand() - 0.5) * 2;
+    let readiness = 0.45 * skillBase + 0.35 * surgeCoverage
+      + 0.20 * (100 - (s.disruption * 60 + s.geo * 40)) + noise;
+    readiness = Math.max(0, Math.min(100, readiness));
+
+    // per-directorate readiness (skill-driven, dragged by disruption/geo)
+    const dirReadiness = DIRECTORATES.map(d => {
+      const avgSkill = byDir[d].n ? byDir[d].skill / byDir[d].n : 0;
+      let r = avgSkill * 100 * (1 - 0.18 * s.disruption - 0.12 * s.geo);
+      return { dir: d, readiness: Math.max(0, Math.min(100, r)) };
+    });
+
+    return {
+      scenarioIndex: this.scenarioIndex,
+      scenario: s,
+      tick: this.tick,
+      population: this.population,
+      syntheticRecords: this.syntheticRecords,
+      productivity, readiness, surgeCoverage,
+      manualHoursPerDay: Math.round(residualManual),
+      automatedHoursPerDay: Math.round(automatedHours),
+      dirReadiness,
+    };
+  },
+};
+
+// ----------------------------------------------------------------------------
+// View
+// ----------------------------------------------------------------------------
+const $ = id => document.getElementById(id);
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const color = (v, good, warn) => v >= good ? "var(--good)" : v >= warn ? "var(--warn)" : "var(--bad)";
+
+function bar(pct, col) {
+  return `<div class="bar"><span style="width:${(clamp01(pct)*100).toFixed(0)}%;background:${col}"></span></div>`;
+}
+
+function kpiCard(label, val, sub, pct, col) {
+  return `<div class="kpi">
+    <div class="k-label">${label}</div>
+    <div class="k-val">${val}</div>
+    <div class="k-sub">${sub}</div>
+    ${bar(pct, col)}
+  </div>`;
+}
+
+function initControls() {
+  const sel = $("scnSelect");
+  sel.innerHTML = SCENARIOS.map((s, i) => `<option value="${i}">${i+1}. ${s.name}</option>`).join("");
+  sel.addEventListener("change", () => applyScenario(parseInt(sel.value, 10), true));
+  $("nextBtn").addEventListener("click", () => { Engine.cycle(+1); broadcastScenario(); render(); });
+  $("prevBtn").addEventListener("click", () => { Engine.cycle(-1); broadcastScenario(); render(); });
+}
+
+function applyScenario(i, broadcast) {
+  Engine.setScenario(i);
+  if (broadcast) broadcastScenario();
+  render();
+}
+
+function render() {
+  const st = Engine.computeState();
+  const s = st.scenario;
+
+  $("scnName").textContent = s.name;
+  $("scnDesc").textContent = s.desc;
+  $("scnSelect").value = String(st.scenarioIndex);
+
+  const autoShare = st.automatedHoursPerDay / Math.max(1, st.automatedHoursPerDay + st.manualHoursPerDay);
+  $("kpis").innerHTML = [
+    kpiCard("PRODUCTIVITY MULTIPLIER", st.productivity.toFixed(1) + "x",
+      "target 10x · great-power overmatch", st.productivity / 10,
+      color(st.productivity, 7, 3)),
+    kpiCard("MISSION READINESS", st.readiness.toFixed(0) + "%",
+      "skill · backfill · disruption blend", st.readiness / 100,
+      color(st.readiness, 75, 50)),
+    kpiCard("SURGE BACKFILL COVERAGE", st.surgeCoverage.toFixed(0) + "%",
+      "deployable staff vs. deployed gap", st.surgeCoverage / 100,
+      color(st.surgeCoverage, 90, 60)),
+    kpiCard("MANUAL WORK AUTOMATED", (autoShare * 100).toFixed(0) + "%",
+      st.automatedHoursPerDay + " hrs/day shifted to AI", autoShare, "var(--accent)"),
+  ].join("");
+
+  $("dirBreak").innerHTML = st.dirReadiness.map(d =>
+    `<div class="row"><span class="nm">${d.dir}</span>${bar(d.readiness/100, color(d.readiness,75,50))}
+     <span class="pct">${d.readiness.toFixed(0)}%</span></div>`).join("");
+
+  const drv = [
+    ["Surge / deployment", s.surge],
+    ["Supply-chain stress", s.disruption],
+    ["Geopolitical pressure", s.geo],
+    ["AI adoption", s.aiAdoption],
+  ];
+  $("drivers").innerHTML = drv.map(([nm, v]) =>
+    `<div class="row"><span class="nm">${nm}</span>${bar(v, "var(--accent)")}
+     <span class="pct">${(v*100).toFixed(0)}%</span></div>`).join("");
+
+  $("popN").textContent = st.population;
+  $("recN").textContent = st.syntheticRecords.toLocaleString();
+  $("tickN").textContent = st.tick;
+}
+
+// ----------------------------------------------------------------------------
+// Local "reflector" — best-effort cross-window sync via BroadcastChannel.
+// Shares the active scenario and a live window count. Degrades to standalone.
+// ----------------------------------------------------------------------------
+let bc = null;
+const WIN_ID = Math.random().toString(36).slice(2);
+const peers = new Map(); // id -> last-seen ms
+
+function broadcastScenario() {
+  try { bc && bc.postMessage({ t: "scenario", i: Engine.scenarioIndex, from: WIN_ID }); } catch (e) {}
+}
+
+function setupSync() {
+  try {
+    bc = new BroadcastChannel("dto-dla26bz03");
+    $("syncMode").textContent = "synced";
+    bc.onmessage = (ev) => {
+      const m = ev.data || {};
+      if (m.from === WIN_ID) return;
+      if (m.t === "scenario") { Engine.setScenario(m.i); render(); }
+      else if (m.t === "ping") {
+        peers.set(m.from, Date.now());
+        // answer new windows so they learn current scenario + our presence
+        try { bc.postMessage({ t: "pong", from: WIN_ID, i: Engine.scenarioIndex }); } catch (e) {}
+      } else if (m.t === "pong") {
+        peers.set(m.from, Date.now());
+      }
+    };
+    // presence heartbeat
+    setInterval(() => {
+      try { bc.postMessage({ t: "ping", from: WIN_ID }); } catch (e) {}
+      const cutoff = Date.now() - 3500;
+      for (const [id, ts] of peers) if (ts < cutoff) peers.delete(id);
+      $("winCount").textContent = String(peers.size + 1);
+    }, 1000);
+    try { bc.postMessage({ t: "ping", from: WIN_ID }); } catch (e) {}
+  } catch (e) {
+    $("syncMode").textContent = "standalone";
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Boot
+// ----------------------------------------------------------------------------
+Engine.buildWorkforce();
+initControls();
+setupSync();
+render();
+// continuous-learning refresh loop (synthetic data + live KPIs)
+setInterval(() => { Engine.step(); render(); }, 1500);
+</script>
+</body>
+</html>

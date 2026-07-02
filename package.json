@@ -1,18 +1,11 @@
 {
-  "name": "my-croquet-microverse-world",
+  "name": "ultisim-dto",
   "version": "1.0.0",
-  "description": "A World in Croquet Microverse",
+  "description": "UltiSim Digital Twin of the Organization (DTO) — DLA26BZ03-NV011. Canonical POC is the dependency-free build in standalone/.",
   "scripts": {
-    "start": "npm-run-all --parallel file-server watch-server",
-    "file-server": "file-server --port 9684",
-    "watch-server": "watch-server"
+    "start": "python3 -m http.server 8000 --directory standalone",
+    "note": "Open standalone/dto-dashboard.html directly, or run `npm start` and visit http://localhost:8000/dto-dashboard.html. The legacy Croquet Microverse world (index.html + lib/) no longer connects; see docs/DTO_Solution_Design.md."
   },
-  "dependencies": {
-    "@croquet/microverse-library": "0.3.8"
-  },
-  "devDependencies": {
-    "npm-run-all": "^4.1.5",
-    "@croquet/microverse-watch-server": "^1.0.6",
-    "@croquet/microverse-file-server": "^1.0.7"
-  }
+  "license": "UNLICENSED",
+  "private": true
 }
