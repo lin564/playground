@@ -37,12 +37,16 @@ synthetic-data-capable model that any leader can drive in a shared environment.
 The design mirrors the four tiers in the Technical Volume. The POC implements a thin,
 transparent slice of every tier so the concept runs end-to-end today.
 
-| Tier | Production role | POC realization (`dtoEngine.js`) |
+The canonical POC is the **standalone offline build** (`standalone/`, see §10); the mapping below
+references it. (The legacy Microverse build in `behaviors/default/dtoEngine.js` implemented the same
+tiers on Croquet before that network was retired.)
+
+| Tier | Production role | POC realization (`standalone/`) |
 |------|-----------------|----------------------------------|
-| **1 — Physical** | Ingests live DLA data: personnel, logistics, procurement, comms | Synthetic data feed (`step()` generates de-identified record batches each cadence). No real PII. |
-| **2 — Digital** | Agent-based simulation; each workforce element is an adaptive agent; ML updates agents as patterns shift | `buildWorkforce()` instantiates 240 agents across J1/J3/J6/J7 with skill, manual load, automatability, and deployability drawn from stable distributions. |
-| **3 — Analytics** | NLP + predictive modeling extract org intelligence | `computeState()` converts the agent population + active scenario into the RFP's KPIs (productivity, readiness, surge backfill, automation share). |
-| **4 — Interface** | Dashboards & scenario-planning on the DoD Virtual World Framework | `DTODashboardPawn` renders a collaborative 3D dashboard; tapping it advances scenarios for **all** connected users. |
+| **1 — Physical** | Ingests live DLA data: personnel, logistics, procurement, comms | `dto-dashboard.html` Data-Ingestion panel — four simulated feeds (personnel/logistics/procurement/comms) + SMARTR pipeline + validation rate. No real PII. |
+| **2 — Digital** | Agent-based simulation; each workforce element is an adaptive agent; ML updates agents as patterns shift | `createEngine()` instantiates 240 agents across J1/J3/J6/J7 with skill, automatability, role, load, and fatigue feedback; rendered live in `dto-twin.html`. |
+| **3 — Analytics** | NLP + predictive modeling extract org intelligence | `step()` derives the RFP's KPIs (productivity multiplier, readiness, surge coverage, automation, overload) + the structural 10× decomposition, emergent from agent state. |
+| **4 — Interface** | Dashboards & scenario-planning on the DoD Virtual World Framework | `dto-dashboard.html` — a decision-simulator UI with the 3D twin embedded as the hero; local cross-window sync via `BroadcastChannel`/`postMessage`. |
 
 ```
             ┌─────────────────────── Croquet replicated model (shared truth) ───────────────────────┐
@@ -170,17 +174,18 @@ expresses it as recovered FTE-equivalents and reduced time-to-decision.
 
 ## 9. Running the POC
 
+**Canonical (standalone, offline — recommended):** open `standalone/dto-dashboard.html` in a
+browser (double-click), or serve the folder for guaranteed cross-frame sync:
+
 ```bash
-npm install
-npm start            # dev server on http://localhost:9684
+cd standalone && python3 -m http.server 8000   # then open http://localhost:8000/dto-dashboard.html
 ```
 
-Open the world, walk up to the **DTO Dashboard** panel, and **tap it** to step through the
-five scenarios. Because state lives in the replicated model, a second browser/participant sees
-the identical twin and the same scenario change in real time. Key files:
+No install, no API key, no network. Set up a decision in the console, preview the projected impact,
+then **Run This Decision** to commit it to the embedded 3D twin. See §10 for the file map.
 
-- `behaviors/default/dtoEngine.js` — DTO engine (Tiers 1–3) + dashboard (Tier 4)
-- `worlds/default.js` — registers the `DTO` module and places the dashboard card
+**Legacy Microverse build (Croquet network retired July 2025 — no longer connects):**
+`npm install && npm start` served `behaviors/default/dtoEngine.js` + `worlds/default.js` on port 9684.
 
 ---
 
