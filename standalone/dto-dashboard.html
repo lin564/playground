@@ -47,7 +47,7 @@
   .kpi .proj{font-size:11px;font-weight:700} .kpi .g{font-size:10px;color:var(--soft);margin-top:2px}
   .kpi canvas{width:100%;height:18px;display:block;margin-top:4px}
   /* work row: twin + console */
-  .work{display:grid;grid-template-columns:1.65fr 1fr;gap:14px;align-items:start}
+  .work{display:grid;grid-template-columns:1.8fr 1fr;gap:14px;align-items:start}
   @media(max-width:980px){.work{grid-template-columns:1fr}}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
   .card .pad{padding:14px}
@@ -105,6 +105,20 @@
   .synbtn{background:#13294a;border:1px solid #2a4f86;color:#dceeff;border-radius:9px;padding:8px 12px;cursor:pointer;font-size:12px;margin-top:10px}
   .up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--soft)}
   .muted{color:var(--muted)} .small{font-size:11px;color:var(--soft)}
+  /* compare A/B */
+  .cmp{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .cmp button{background:#13294a;border:1px solid #2a4f86;color:#dceeff;border-radius:8px;padding:7px 11px;cursor:pointer;font-size:12px}
+  .cmpout{width:100%;margin-top:8px}
+  .cmpout table{width:100%;border-collapse:collapse;font-size:11px}
+  .cmpout td,.cmpout th{padding:4px 6px;border-bottom:1px solid #1a2c4d;text-align:right}
+  .cmpout th:first-child,.cmpout td:first-child{text-align:left;color:var(--muted)}
+  /* first-run tour */
+  .tour{position:fixed;inset:0;z-index:50}
+  .tspot{position:fixed;border:2px solid #36c6f0;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,10,20,.62);pointer-events:none;z-index:51;transition:all .2s}
+  .tbox{position:fixed;width:300px;max-width:calc(100vw - 24px);background:#0f2143;border:1px solid #2a4f86;border-radius:12px;padding:14px;z-index:52;box-shadow:var(--shadow)}
+  .tbox .tt{font-size:13px;color:#e7f0ff} .tbox .trow{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--soft);font-size:12px}
+  .tbox button{background:#13294a;border:1px solid #2a4f86;color:#dceeff;border-radius:8px;padding:6px 12px;cursor:pointer;margin-left:6px}
+  .tbox button.tprim{background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;font-weight:700}
 </style>
 </head>
 <body>
@@ -112,7 +126,7 @@
   <div class="logo">◆</div>
   <div class="brand"><b>UltiSim<i>DTO</i></b><div class="tag">Workforce Decision Simulator</div></div>
   <div class="tabs"><span class="tab on">Simulator</span><span class="tab">Data</span><span class="tab">Scenarios</span><span class="tab">Readiness</span><span class="tab">Analytics</span></div>
-  <div class="navr"><div class="icobtn">🔔</div><div class="icobtn">⚙</div><button class="cta" id="playBtn">⏸ Live</button></div>
+  <div class="navr"><div class="icobtn" id="tourBtn" title="How to use">?</div><div class="icobtn">🔔</div><div class="icobtn">⚙</div><button class="cta" id="playBtn">⏸ Live</button></div>
 </nav>
 <div class="status">
   🧪 SIMULATION MODE — <b>no real systems affected.</b>
@@ -139,7 +153,7 @@
       <div class="hero"><iframe id="twin" src="./dto-twin.html?embed=1" title="3D twin"></iframe></div>
     </div></div>
 
-    <div class="card console"><div class="pad">
+    <div class="card console" id="consoleCard"><div class="pad">
       <div class="cap"><span class="head">Decision Console</span><span class="pillproj">PROJECTED</span></div>
       <div class="grp">Quick scenarios</div>
       <div class="chips" id="chips"></div>
@@ -150,6 +164,9 @@
       <div class="pathway" id="pathway"></div>
       <div class="verdict warn" id="verdict"><div class="ic" id="vIc">⚠️</div><div><div class="vh" id="vHead">—</div><div class="vt" id="vText">—</div></div></div>
       <button class="run" id="runBtn">Run This Decision ▶</button>
+      <div class="grp">Compare decisions</div>
+      <div class="cmp"><button id="pinA">📌 Pin as A</button><button id="pinB">📌 Pin as B</button>
+        <span class="small">stage a decision, pin it, compare</span><div id="cmpOut" class="cmpout"></div></div>
     </div></div>
   </div>
 
@@ -188,6 +205,12 @@
       <div class="small" style="margin-top:9px">Illustrative model outputs for a TRL 3–6 feasibility demo — <b>not validated against live DLA data</b>.</div>
     </div></div>
   </div>
+</div>
+
+<div id="tour" class="tour" style="display:none">
+  <div class="tspot" id="tspot"></div>
+  <div class="tbox" id="tbox"><div class="tt" id="ttext"></div>
+    <div class="trow"><span id="tstep"></span><span><button id="tskip">Skip</button><button id="tnext" class="tprim">Next</button></span></div></div>
 </div>
 
 <script>
@@ -407,6 +430,43 @@ function tick(){ if(playing){eng.step();tickFeeds();} refresh(); }
 $("playBtn").addEventListener("click",e=>{playing=!playing;e.target.textContent=playing?"⏸ Live":"▶ Paused";});
 function clock(){const d=new Date();$("clock").textContent=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});}
 setInterval(clock,1000); clock();
+
+// ---- compare A/B decisions ----
+let pinA=null,pinB=null;
+function curLabel(){const on=document.querySelector(".chip.on");return on?on.textContent.trim():"Custom";}
+$("pinA").addEventListener("click",()=>{pinA={label:curLabel(),k:projectParams(decision)};renderCmp();});
+$("pinB").addEventListener("click",()=>{pinB={label:curLabel(),k:projectParams(decision)};renderCmp();});
+function renderCmp(){
+  if(!pinA&&!pinB){$("cmpOut").innerHTML="";return;}
+  const rows=[["Work capacity","prod",v=>v.toFixed(1)+"×"],["Readiness","readiness",v=>v.toFixed(0)+"%"],
+    ["Coverage","coverage",v=>v.toFixed(0)+"%"],["Overstretched","overloaded",v=>v.toFixed(0)],["Automated","automation",v=>v.toFixed(0)+"%"]];
+  let h=`<table><tr><th>Metric</th><th>A: ${pinA?pinA.label:"—"}</th><th>B: ${pinB?pinB.label:"—"}</th></tr>`;
+  rows.forEach(([lab,key,f])=>{h+=`<tr><td>${lab}</td><td>${pinA?f(pinA.k[key]):"—"}</td><td>${pinB?f(pinB.k[key]):"—"}</td></tr>`;});
+  $("cmpOut").innerHTML=h+"</table>";
+}
+
+// ---- guided first-run tour ----
+const TOURS=[
+  ["kpis","These tiles show the LIVE state of the org — and, once you stage a decision, a “→ projected” value so you can see where it heads."],
+  ["consoleCard","Set up a decision here: pick a scenario, or move the structural levers (AI, process, teaming, reskilling). The preview updates instantly."],
+  ["runBtn","Happy with the projected impact and the verdict? Run This Decision to commit it — the 3D twin on the left then adapts week by week."],
+];
+let ti=0;
+function renderTour(){
+  const [id,txt]=TOURS[ti], el=$(id); if(!el)return endTour();
+  const r=el.getBoundingClientRect(), spot=$("tspot");
+  spot.style.left=(r.left-6)+"px"; spot.style.top=(r.top-6)+"px"; spot.style.width=(r.width+12)+"px"; spot.style.height=(r.height+12)+"px";
+  $("ttext").textContent=txt; $("tstep").textContent=(ti+1)+" / "+TOURS.length;
+  $("tnext").textContent= ti===TOURS.length-1 ? "Done" : "Next";
+  const box=$("tbox"); box.style.left=Math.max(12,Math.min(innerWidth-312,r.left))+"px";
+  let top=r.bottom+12; if(top>innerHeight-150) top=Math.max(12,r.top-150); box.style.top=top+"px";
+}
+function showTour(){ti=0;$("tour").style.display="block";renderTour();}
+function endTour(){$("tour").style.display="none";try{localStorage.setItem("dto_tour_done","1");}catch(e){}}
+$("tnext").addEventListener("click",()=>{ if(ti<TOURS.length-1){ti++;renderTour();} else endTour(); });
+$("tskip").addEventListener("click",endTour);
+$("tourBtn").addEventListener("click",showTour);
+try{ if(!localStorage.getItem("dto_tour_done")) setTimeout(showTour,700); }catch(e){}
 
 // boot
 addEventListener("resize",()=>{refresh();drawHist();});
